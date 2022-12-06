@@ -12,6 +12,9 @@ const messageSchema = Schema(
       type: String,
       required: true,
     },
+    fileName: {
+      type: String,
+    },
     to: {
       type: String,
       required: true,

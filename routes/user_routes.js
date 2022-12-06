@@ -12,10 +12,12 @@ import {
 } from "../controllers/user_controller.js";
 import { multerProcess } from "../utils/multer.js";
 import { verifyUser } from "../middlewares/verify_user.js";
+import { getSingleUser } from "../controllers/Admin/admin_user.js";
 const router = Router();
 
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
+router.route("/user/:id").post(getSingleUser);
 router.route("/me").get(verifyUser, getCurrentUser);
 router.route("/edit-user").put(verifyUser, editUser);
 router

@@ -45,6 +45,7 @@ export const addNewConversation = catchAsyncError(async (req, res, next) => {
 });
 
 export const addMessage = catchAsyncError(async (req, res, next) => {
+  console.log(req.body);
   const message = await messages.create(req.body);
   res.status(200).json({
     success: true,
