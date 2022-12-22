@@ -24,7 +24,7 @@ export const verifyUser = async (req, res, next) => {
       return next(new Errorhandler(404, "User not found"));
 
     req.user = user || instructor;
-    console.log(req.user);
+    // console.log(req.user);
     next();
   });
 };
@@ -52,7 +52,7 @@ export const verifyInstructor = async (req, res, next) => {
       return next(new Errorhandler(403, "You Are Not A Instructor"));
 
     req.user = instructor;
-    console.log(req.user);
+    // console.log(req.user);
     next();
   });
 };

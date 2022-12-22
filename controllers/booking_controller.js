@@ -9,11 +9,9 @@ import { sendEmail } from "./email_controller.js";
 export const makeBooking = catchAsyncError(async (req, res, next) => {
   if (!req.body.duration)
     return next(new Errorhandler(404, "Invalid Booking Information Provided"));
-
-  console.log(req.body, "req. body");
-  const booking = await Booking.create({ ...req.body, user: req.user });
   const user = await userModel.findById(req.user._id);
 
+  // if the user has less credit
   if (user.credit < req.body.duration)
     return next(
       new Errorhandler(
@@ -21,6 +19,10 @@ export const makeBooking = catchAsyncError(async (req, res, next) => {
         "You Don't Have Enough Credit's To Make This Booking"
       )
     );
+
+  // console.log(req.body, "req. body");
+  const booking = await Booking.create({ ...req.body, user: req.user });
+
   user.credit = user.credit - req.body.duration;
   await user.save();
 
@@ -77,7 +79,7 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   booking.status = status;
   booking.save();
 
-  console.log(status, "booking status");
+  // console.log(status, "booking status");
   if (booking.status === "Ended") {
     const instructor = await Instructor.findById(booking.instructor);
     instructor.credit = instructor.credit + booking.duration;
@@ -104,7 +106,7 @@ export const getInstructorBookings = catchAsyncError(async (req, res, next) => {
   const bookings = await Booking.find({ instructor }).populate(
     "instructor user"
   );
-  console.log(bookings.length);
+  // console.log(bookings.length);
 
   res.status(200).json({
     success: true,
@@ -118,7 +120,7 @@ export const getUserBookings = catchAsyncError(async (req, res, next) => {
     "instructor user"
   );
 
-  console.log(bookings.length);
+  // console.log(bookings.length);
 
   res.status(200).json({
     success: true,

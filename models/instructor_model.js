@@ -71,8 +71,8 @@ const instructorSchema = mongoose.Schema({
     },
   ],
   car: {
-    name: { type: String, required: true },
-    numberPlate: { type: String, required: true },
+    name: { type: String },
+    numberPlate: { type: String },
     image: { type: String },
   },
   serviceSuburbs: {
