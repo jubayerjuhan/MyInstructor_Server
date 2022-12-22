@@ -5,7 +5,7 @@ import { carModel } from "../../models/carModel.js";
 import Errorhandler from "../../middlewares/handle_error.js";
 
 export const addCar = catchAsyncError(async (req, res, next) => {
-  console.log(req.file);
+  // console.log(req.file);
   const bucket = gcloudStorage.bucket("my_instructor");
   // ===========Image upload handleing===============
   if (!req.file) {

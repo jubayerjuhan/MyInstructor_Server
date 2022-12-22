@@ -45,7 +45,7 @@ router.route("/login").post(loginAdmin);
 router.route("/all-users").get(verifyAdmin, getAllUsers);
 router.route("/all-instructors").get(verifyAdmin, getAllInstructors);
 router.route("/all-bookings").get(verifyAdmin, getAllBookings);
-router.route("/all-cars").get(verifyAdmin, getAllCars);
+router.route("/all-cars").get(getAllCars);
 router.route("/applied-instructors").get(verifyAdmin, getAppliedInstructors);
 router.route("/expired-instructors").get(getExpiredInstructor);
 router.route("/set-price").post(setLessonPrice);
