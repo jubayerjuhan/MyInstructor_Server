@@ -11,6 +11,7 @@ import bookingRoute from "./routes/booking_route.js";
 import adminRoute from "./routes/admin_route.js";
 import suburbRoute from "./routes/suburb_route.js";
 import giftCardRoute from "./routes/giftcard_route.js";
+import agreementRoute from "./routes/agreement_route.js";
 import conversationRoute from "./routes/conversation_route.js";
 import { Server } from "socket.io";
 
@@ -35,8 +36,9 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 // bodyparser
-app.use(bodyParser.json());
+
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // initializing necessery variable and port
 const PORT = process.env.PORT || 5000;
@@ -55,6 +57,7 @@ app.use("/api/admin", checkOrigin, adminRoute);
 app.use("/api", giftCardRoute);
 app.use("/api", suburbRoute);
 app.use("/api/convo", conversationRoute);
+app.use("/api/agreement", agreementRoute);
 
 // image request
 app.use("/uploads", express.static("./tmp"), (req, res, next) => {

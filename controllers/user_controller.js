@@ -162,7 +162,7 @@ export const updateProfilePic = catchAsyncError(async (req, res, next) => {
 
 // upload image
 export const uploadFilesToServer = catchAsyncError(async (req, res, next) => {
-  // console.log(req.file);
+  console.log(req.body);
   const bucket = gcloudStorage.bucket("my_instructor");
   // ===========Image upload handleing===============
   if (!req.file) {
