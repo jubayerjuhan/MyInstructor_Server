@@ -11,20 +11,24 @@ export const makeBooking = catchAsyncError(async (req, res, next) => {
     return next(new Errorhandler(404, "Invalid Booking Information Provided"));
   const user = await userModel.findById(req.user._id);
 
-  // if the user has less credit
-  if (user.credit < req.body.duration)
-    return next(
-      new Errorhandler(
-        403,
-        "You Don't Have Enough Credit's To Make This Booking"
-      )
-    );
+  if (req.body.type !== "Test Package") {
+    if (user.credit < req.body.duration)
+      // if the user has less credit
+      return next(
+        new Errorhandler(
+          403,
+          "You Don't Have Enough Credit's To Make This Booking"
+        )
+      );
+  }
 
   // console.log(req.body, "req. body");
   const booking = await Booking.create({ ...req.body, user: req.user });
 
-  user.credit = user.credit - req.body.duration;
-  await user.save();
+  if (req.body.type !== "Test Package") {
+    user.credit = user.credit - req.body.duration;
+    await user.save();
+  }
 
   const instructor = await Instructor.findById(req.body.instructor);
 
