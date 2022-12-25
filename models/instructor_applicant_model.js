@@ -68,6 +68,7 @@ const instructorapplicantSchema = mongoose.Schema(
         nativaName: String,
       },
     ],
+    licensePhotos: [{ type: String, required: true }],
     serviceSuburbs: [
       {
         postcode: String,
