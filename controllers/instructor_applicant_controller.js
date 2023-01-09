@@ -21,6 +21,7 @@ export const getAppliedInstructors = catchAsyncError(async (req, res, next) => {
     applicants,
   });
 });
+
 export const getApplicationInformation = catchAsyncError(
   async (req, res, next) => {
     const applicant = await InstructorApplicantModel.findById(req.params.id);
@@ -30,3 +31,12 @@ export const getApplicationInformation = catchAsyncError(
     });
   }
 );
+
+export const removeApplication = catchAsyncError(async (req, res, next) => {
+  const applicant = await InstructorApplicantModel.findByIdAndDelete(
+    req.params.id
+  );
+  res.status(200).json({
+    success: true,
+  });
+});
