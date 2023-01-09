@@ -7,7 +7,7 @@ export const allowedorigin = [
   "https://research-library.netlify.app",
   "http://myinstructor.com.au",
   "https://myinstructor.com.au",
-  "https://www.myinstructor.com.au/",
+  "https://www.myinstructor.com.au",
 ];
 
 export const checkOrigin = (req, res, next) => {
