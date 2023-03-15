@@ -39,7 +39,8 @@ const bookingSchema = mongoose.Schema({
       required: true,
     },
     suburb: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "suburb",
       required: true,
     },
     postcode: {

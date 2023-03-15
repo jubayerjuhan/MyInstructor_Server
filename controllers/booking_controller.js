@@ -57,7 +57,9 @@ export const findBooking = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   if (!id) return next(new Errorhandler(404, "No Booking Id Provided"));
 
-  const booking = await Booking.findById(id).populate("user instructor");
+  const booking = await Booking.findById(id).populate(
+    "user instructor pickupDetails.suburb"
+  );
 
   if (!booking)
     return next(new Errorhandler(404, "No Booking Found With this id"));

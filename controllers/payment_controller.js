@@ -17,6 +17,8 @@ export const createPaymentIndent = catchAsyncError(async (req, res, next) => {
     currency: "aud",
     payment_method_types: ["card"],
   });
+
+  console.log(paymentIntent, "paymentintent");
   res.status(200).json({
     success: true,
     clientSecret: paymentIntent.client_secret,

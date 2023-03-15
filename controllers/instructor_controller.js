@@ -202,6 +202,8 @@ export const resetPasswordInstructor = catchAsyncError(
       .select("+resetPasswordToken")
       .select("+resetPasswordTime");
 
+    console.log(instructor, "instructor");
+
     // matching the token
     if (Date.now() > instructor.resetPasswordTime) {
       return next(
