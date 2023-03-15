@@ -112,6 +112,12 @@ const instructorSchema = mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  hasGst: {
+    type: Boolean,
+    required: true,
+    enum: [true, false],
+    default: false,
+  },
   userType: {
     type: String,
     default: "instructor",
