@@ -254,6 +254,7 @@ export const updateInstructorAvater = catchAsyncError(
 
     // Create a new blob in the bucket and upload the file data.
     const blob = bucket.file(Date.now() + req.file.originalname);
+
     const blobStream = blob.createWriteStream({
       resumable: false,
     });

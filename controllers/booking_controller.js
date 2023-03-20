@@ -4,6 +4,7 @@ import Errorhandler from "../middlewares/handle_error.js";
 import { Booking } from "../models/booking_model.js";
 import { Instructor } from "../models/instructor_model.js";
 import { userModel } from "../models/user_model.js";
+import { addEarningsToInstructor } from "./earnings_controller.js";
 import { sendEmail } from "./email_controller.js";
 
 export const makeBooking = catchAsyncError(async (req, res, next) => {
@@ -78,24 +79,24 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   if (!id || !status) return next(new Errorhandler(404, "Invalid Request"));
 
   const booking = await Booking.findById(id).populate("user");
-  const oldStatus = booking.status;
+  const instructor = await Instructor.findById(booking.instructor);
+  addEarningsToInstructor(booking?.instructor, booking);
+  // if (booking.status === "Ended")
+  //   return next(new Errorhandler(403, "Booking Already Ended"));
+  // booking.status = status;
+  // booking.save();
 
-  if (booking.status === "Ended")
-    return next(new Errorhandler(403, "Booking Already Ended"));
-  booking.status = status;
-  booking.save();
+  // // console.log(status, "booking status");
+  // if (booking.status === "Ended") {
+  //   const instructor = await Instructor.findById(booking.instructor);
+  //   instructor.credit = instructor.credit + booking.duration;
+  //   instructor.save();
+  // }
 
-  // console.log(status, "booking status");
-  if (booking.status === "Ended") {
-    const instructor = await Instructor.findById(booking.instructor);
-    instructor.credit = instructor.credit + booking.duration;
-    instructor.save();
-  }
-
-  const sms = `Your Booking Status Was ${oldStatus}, Now It's Changed to ${
-    booking.status
-  }. Current Booking Status: ${JSON.stringify(booking.status).toUpperCase()}`;
-  sendEmail(6, booking.user.email, booking.user.name, sms);
+  // const sms = `Your Booking Status Was ${oldStatus}, Now It's Changed to ${
+  //   booking.status
+  // }. Current Booking Status: ${JSON.stringify(booking.status).toUpperCase()}`;
+  // sendEmail(6, booking.user.email, booking.user.name, sms);
 
   res.status(200).json({
     success: true,

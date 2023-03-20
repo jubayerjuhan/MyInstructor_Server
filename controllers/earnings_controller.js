@@ -1,5 +1,6 @@
 import { Suburbs } from "../models/subrubs_model.js";
 import EarningsModel from "../models/earnings_model.js";
+import { generateInvoice } from "../invoice/generate_invoice/generateInvoice.js";
 
 export const addEarningsToInstructor = async (instructor, booking) => {
   const suburb = await Suburbs.findById(booking.pickupDetails.suburb);
@@ -32,5 +33,6 @@ export const addEarningsToInstructor = async (instructor, booking) => {
     gst: Number(gst.toFixed(2)),
   });
 
-  console.log(earning);
+  const invoice = await generateInvoice();
+  console.log(invoice, "invoice");
 };
