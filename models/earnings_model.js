@@ -28,6 +28,10 @@ const EarningSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    invoice: {
+      type: String,
+      required: [true, "Invoice Is Required"],
+    },
     serviceCharge: {
       type: Number,
       required: true,

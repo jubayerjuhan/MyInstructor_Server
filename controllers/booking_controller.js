@@ -79,24 +79,39 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   if (!id || !status) return next(new Errorhandler(404, "Invalid Request"));
 
   const booking = await Booking.findById(id).populate("user");
+  const oldStatus = booking.status;
+
   const instructor = await Instructor.findById(booking.instructor);
-  addEarningsToInstructor(booking?.instructor, booking);
-  // if (booking.status === "Ended")
-  //   return next(new Errorhandler(403, "Booking Already Ended"));
-  // booking.status = status;
-  // booking.save();
 
-  // // console.log(status, "booking status");
-  // if (booking.status === "Ended") {
-  //   const instructor = await Instructor.findById(booking.instructor);
-  //   instructor.credit = instructor.credit + booking.duration;
-  //   instructor.save();
-  // }
+  if (booking.status === "Ended")
+    return next(new Errorhandler(403, "Booking Already Ended"));
+  booking.status = status;
+  booking.save();
 
-  // const sms = `Your Booking Status Was ${oldStatus}, Now It's Changed to ${
-  //   booking.status
-  // }. Current Booking Status: ${JSON.stringify(booking.status).toUpperCase()}`;
-  // sendEmail(6, booking.user.email, booking.user.name, sms);
+  // console.log(status, "booking status");
+  if (booking.status === "Ended") {
+    const instructor = await Instructor.findById(booking.instructor);
+    // instructor.credit = instructor.credit + booking.duration;
+    // instructor.save();
+
+    try {
+      const invoice = await addEarningsToInstructor(instructor, booking, next);
+      console.log("hello", invoice);
+      return res.status(200).json({
+        success: true,
+        invoice,
+        booking,
+      });
+    } catch (error) {
+      return next(new Errorhandler(500, "Can't Generate Invoice"));
+    }
+  }
+
+  //
+  const sms = `Your Booking Status Was ${oldStatus}, Now It's Changed to ${
+    booking.status
+  }. Current Booking Status: ${JSON.stringify(booking.status).toUpperCase()}`;
+  sendEmail(6, booking.user.email, booking.user.name, sms);
 
   res.status(200).json({
     success: true,
