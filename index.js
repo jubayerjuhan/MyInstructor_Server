@@ -22,6 +22,8 @@ import cors from "cors";
 import "dotenv/config";
 import { Storage } from "@google-cloud/storage";
 import { allowedorigin, checkOrigin } from "./middlewares/checkOrigin.js";
+import { sendEmail } from "./middlewares/email/sendEmail.js";
+import moment from "moment";
 
 // initializing app
 const app = express();
@@ -64,12 +66,23 @@ app.use("/uploads", express.static("./tmp"), (req, res, next) => {
   next();
 });
 
+app.use(express.static("assets"));
+
 // home request
 app.get("/", (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "My Instructor Server Is Up And Running.....",
   });
+});
+
+// test request
+app.post("/", (req, res, next) => {
+  sendEmail();
+  // res.status(200).json({
+  //   success: true,
+  //   message: "My Instructor Server Is Up And Running.....",
+  // });
 });
 
 // google cloud storage

@@ -12,11 +12,27 @@ const EarningSchema = new mongoose.Schema(
       ref: "Instructor",
       required: true,
     },
+    duration: {
+      type: Number,
+      required: true,
+    },
     bookingAmount: {
       type: Number,
       required: true,
     },
-    duration: {
+    unitPrice: {
+      type: Number,
+      required: true,
+    },
+    total: {
+      type: Number,
+      required: true,
+    },
+    managementFee: {
+      type: Number,
+      required: true,
+    },
+    inclusiveGst: {
       type: Number,
       required: true,
     },
@@ -24,17 +40,13 @@ const EarningSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    instructorAmount: {
+    subtotal: {
       type: Number,
       required: true,
     },
     invoice: {
       type: String,
       required: [true, "Invoice Is Required"],
-    },
-    serviceCharge: {
-      type: Number,
-      required: true,
     },
   },
   {
