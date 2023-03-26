@@ -30,22 +30,17 @@ export const addNewConversation = catchAsyncError(async (req, res, next) => {
 
   withoutCurrentConvo.splice(0, 0, user._id || instructor._id);
 
-  // console.log(withoutCurrentConvo, "without current");
-
   const chatList = await conversations.findByIdAndUpdate(
     "6397714d2f2767729e145f1e",
     { conversations: withoutCurrentConvo }
   );
 
-  // // console.log(chatList);
   res.status(200).json({
     success: true,
-    // chatList,
   });
 });
 
 export const addMessage = catchAsyncError(async (req, res, next) => {
-  // console.log(req.body);
   const message = await messages.create(req.body);
   res.status(200).json({
     success: true,
@@ -72,7 +67,6 @@ export const getConvoMessage = catchAsyncError(async (req, res, next) => {
 export const getConversation = catchAsyncError(async (req, res, next) => {
   const convo = await conversations.find({}).populate("conversations");
   const convos = convo[0]["conversations"];
-  // console.log(convos, "convos");
 
   res.status(200).json({
     success: true,

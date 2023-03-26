@@ -77,8 +77,7 @@ app.get("/", (req, res, next) => {
 });
 
 // test request
-app.post("/", (req, res, next) => {
-  sendEmail();
+app.post("/", async (req, res, next) => {
   // res.status(200).json({
   //   success: true,
   //   message: "My Instructor Server Is Up And Running.....",
@@ -121,12 +120,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message_to_admin", (message) => {
-    console.log(message, "message");
     io.to(message.to).emit("recieve_message_admin", message);
   });
 
   socket.on("send__message", (message) => {
-    console.log(message, "message");
     io.to(message.to).emit("recieve_message_user", message);
   });
 });

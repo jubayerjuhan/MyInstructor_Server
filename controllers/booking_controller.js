@@ -5,6 +5,7 @@ import { Booking } from "../models/booking_model.js";
 import { Instructor } from "../models/instructor_model.js";
 import { userModel } from "../models/user_model.js";
 import { addEarningsToInstructor } from "./earnings_controller.js";
+import { sendEmail as sendTransacEmail } from "../middlewares/email/sendEmail.js";
 import { sendEmail } from "./email_controller.js";
 
 export const makeBooking = catchAsyncError(async (req, res, next) => {
@@ -23,7 +24,6 @@ export const makeBooking = catchAsyncError(async (req, res, next) => {
       );
   }
 
-  // console.log(req.body, "req. body");
   const booking = await Booking.create({ ...req.body, user: req.user });
 
   if (req.body.type !== "Test Package") {
@@ -88,15 +88,21 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   booking.status = status;
   booking.save();
 
-  // console.log(status, "booking status");
   if (booking.status === "Ended") {
     const instructor = await Instructor.findById(booking.instructor);
-    // instructor.credit = instructor.credit + booking.duration;
-    // instructor.save();
-
     try {
       const invoice = await addEarningsToInstructor(instructor, booking, next);
-      console.log("hello", invoice);
+      sendTransacEmail(
+        [
+          {
+            name: `${instructor.firstName} ${instructor.lastName}`,
+            email: instructor.email,
+          },
+        ],
+        9,
+        { instructorName: instructor.firstName },
+        [{ url: invoice, name: "Driving Lesson Invoice.pdf" }]
+      );
       return res.status(200).json({
         success: true,
         invoice,
@@ -128,7 +134,6 @@ export const getInstructorBookings = catchAsyncError(async (req, res, next) => {
   const bookings = await Booking.find({ instructor }).populate(
     "instructor user"
   );
-  // console.log(bookings.length);
 
   res.status(200).json({
     success: true,
@@ -141,8 +146,6 @@ export const getUserBookings = catchAsyncError(async (req, res, next) => {
   const bookings = await Booking.find({ user: req.user._id }).populate(
     "instructor user"
   );
-
-  // console.log(bookings.length);
 
   res.status(200).json({
     success: true,

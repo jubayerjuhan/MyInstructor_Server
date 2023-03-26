@@ -51,10 +51,10 @@ const instructorSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  credit: {
-    type: Number,
-    default: 0,
-  },
+  // credit: {
+  //   type: Number,
+  //   default: 0,
+  // },
   languages: [{ type: String, required: true }],
   avater: {
     type: String,
