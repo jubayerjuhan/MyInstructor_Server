@@ -4,6 +4,8 @@ import Errorhandler from "../middlewares/handle_error.js";
 import { Booking } from "../models/booking_model.js";
 import { Instructor } from "../models/instructor_model.js";
 import { userModel } from "../models/user_model.js";
+import { addEarningsToInstructor } from "./earnings_controller.js";
+import { sendEmail as sendTransacEmail } from "../middlewares/email/sendEmail.js";
 import { sendEmail } from "./email_controller.js";
 
 export const makeBooking = catchAsyncError(async (req, res, next) => {
@@ -22,7 +24,6 @@ export const makeBooking = catchAsyncError(async (req, res, next) => {
       );
   }
 
-  // console.log(req.body, "req. body");
   const booking = await Booking.create({ ...req.body, user: req.user });
 
   if (req.body.type !== "Test Package") {
@@ -57,7 +58,9 @@ export const findBooking = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   if (!id) return next(new Errorhandler(404, "No Booking Id Provided"));
 
-  const booking = await Booking.findById(id).populate("user instructor");
+  const booking = await Booking.findById(id).populate(
+    "user instructor pickupDetails.suburb"
+  );
 
   if (!booking)
     return next(new Errorhandler(404, "No Booking Found With this id"));
@@ -78,18 +81,39 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   const booking = await Booking.findById(id).populate("user");
   const oldStatus = booking.status;
 
+  const instructor = await Instructor.findById(booking.instructor);
+
   if (booking.status === "Ended")
     return next(new Errorhandler(403, "Booking Already Ended"));
   booking.status = status;
   booking.save();
 
-  // console.log(status, "booking status");
   if (booking.status === "Ended") {
     const instructor = await Instructor.findById(booking.instructor);
-    instructor.credit = instructor.credit + booking.duration;
-    instructor.save();
+    try {
+      const invoice = await addEarningsToInstructor(instructor, booking, next);
+      sendTransacEmail(
+        [
+          {
+            name: `${instructor.firstName} ${instructor.lastName}`,
+            email: instructor.email,
+          },
+        ],
+        9,
+        { instructorName: instructor.firstName },
+        [{ url: invoice, name: "Driving Lesson Invoice.pdf" }]
+      );
+      return res.status(200).json({
+        success: true,
+        invoice,
+        booking,
+      });
+    } catch (error) {
+      return next(new Errorhandler(500, "Can't Generate Invoice"));
+    }
   }
 
+  //
   const sms = `Your Booking Status Was ${oldStatus}, Now It's Changed to ${
     booking.status
   }. Current Booking Status: ${JSON.stringify(booking.status).toUpperCase()}`;
@@ -110,7 +134,6 @@ export const getInstructorBookings = catchAsyncError(async (req, res, next) => {
   const bookings = await Booking.find({ instructor }).populate(
     "instructor user"
   );
-  // console.log(bookings.length);
 
   res.status(200).json({
     success: true,
@@ -123,8 +146,6 @@ export const getUserBookings = catchAsyncError(async (req, res, next) => {
   const bookings = await Booking.find({ user: req.user._id }).populate(
     "instructor user"
   );
-
-  // console.log(bookings.length);
 
   res.status(200).json({
     success: true,

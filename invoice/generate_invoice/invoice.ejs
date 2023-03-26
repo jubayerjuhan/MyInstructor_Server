@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Invoice</title>
+    <style>
+      * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 50px 50px;
+        box-sizing: border-box;
+        background-color: #f5f5f5;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+        border-style: unset;
+        border: 1px solid rgb(212, 208, 208);
+        margin-bottom: 40px;
+      }
+      thead > tr > th,
+      tbody > tr > td {
+        border: 1px solid rgb(212, 208, 208);
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .subtotal,
+      .tax,
+      .total {
+        font-weight: bold;
+      }
+
+      .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      }
+      .logo {
+        width: 150px;
+        object-fit: contain;
+      }
+      .company {
+        font-size: 13px;
+      }
+      .company > p {
+        line-height: 1.8;
+      }
+      .company-name {
+        font-weight: 600;
+      }
+      .main-title {
+        margin: 50px 0px;
+      }
+
+      .invoice-information-wrapper {
+        line-height: 1.8;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .to,
+      .name {
+        font-weight: 600;
+      }
+
+      .invoice-info > p > span {
+        margin-right: 5px;
+        font-weight: 600;
+      }
+
+      .body-text > p {
+        line-height: 1.2;
+        font-size: 14px;
+      }
+
+      .mail-link {
+        color: #faa41a !important;
+      }
+
+      .footer {
+        font-size: 14px;
+        margin-top: 20px;
+        line-height: 1.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img
+          class="logo"
+          src="https://myinstructor.com.au/static/media/logo.59d9830737fa8ae7974e.png"
+          alt="Logo"
+        />
+        <div class="company">
+          <p class="company-name">My Instructor PTY LTD</p>
+          <p class="company-abn">ABN 39662394041</p>
+          <p class="company-address">4 MECCA, Tarneit, Victoria, 3029</p>
+          <p class="company-email">admin@myinstructor.com.au</p>
+        </div>
+      </div>
+      <h1 class="main-title">Invoice</h1>
+      <div class="invoice-information-wrapper">
+        <div class="customer">
+          <p class="to">To</p>
+          <p class="name"><%= customerName %></p>
+          <p class="abn">ABN 123456789</p>
+          <p class="address">4 MECCA, Tarneit, Victoria, 3029</p>
+        </div>
+        <div class="invoice-info">
+          <p class="id"><span>ID</span>123456</p>
+          <p class="date"><span>Date</span>19 March 2023</p>
+          <p class="amount"><span>Amount</span>$20</p>
+          <p class="description"><span>Description</span>MST Transfer</p>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="4">Description Of Earning</th>
+            <th colspan="4">Duration</th>
+            <th colspan="4">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(function(product) { %>
+          <tr>
+            <td colspan="4"><%= product.name %></td>
+            <td colspan="4"><%= product.quantity %></td>
+            <td colspan="4">$<%= product.price %></td>
+          </tr>
+          <% }); %>
+          <tr>
+            <td colspan="8" class="subtotal">Subtotal</td>
+            <td>$<%= subtotal %></td>
+          </tr>
+          <tr>
+            <td colspan="8" class="gst">GST</td>
+            <td>( - ) $<%= gst %></td>
+          </tr>
+          <tr>
+            <td colspan="8" class="service-fee">Service Fee (20%)</td>
+            <td>( - ) $<%= serviceFee %></td>
+          </tr>
+          <tr>
+            <td colspan="8" class="total"><strong>Total</strong></td>
+            <td><strong>$<%= total %></strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="body-text">
+        <p>
+          For questions regarding your earning, please contact
+          <a class="mail-link" href="mailto:admin@myinstructor.com.au"
+            >admin@myinstructor.com.au</a
+          >
+        </p>
+        <div class="footer">
+          <p>Kind Regards,</p>
+          <p>My Instructor</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

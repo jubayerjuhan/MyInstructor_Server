@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 export const connectToDatabase = () => {
   try {
     mongoose.connect(
-      process.env.DB_URI,
+      process.env.NODE_ENV === "production"
+        ? process.env.DB_URI
+        : process.env.LOCAL_DB_URI,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,

@@ -51,10 +51,10 @@ const instructorSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  credit: {
-    type: Number,
-    default: 0,
-  },
+  // credit: {
+  //   type: Number,
+  //   default: 0,
+  // },
   languages: [{ type: String, required: true }],
   avater: {
     type: String,
@@ -111,6 +111,12 @@ const instructorSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
+  },
+  hasGst: {
+    type: Boolean,
+    required: true,
+    enum: [true, false],
+    default: false,
   },
   userType: {
     type: String,
