@@ -37,7 +37,6 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
     const publicUrl = format(
       `https://storage.googleapis.com/${bucket.name}/${blob.name}`
     );
-    // console.log(publicUrl);
     // ============create instructor==============
 
     const userExist = await Instructor.findOne({ email: req.body?.email });
@@ -61,7 +60,6 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
     password: ${req.body.password}`;
     sendEmail(3, instructor.email, instructor.firstName, sms);
 
-    // console.log(instructor);
     res.status(200).json({
       success: true,
       instructor,
@@ -107,7 +105,6 @@ export const singleInstructor = catchAsyncError(async (req, res, next) => {
 export const searchInstructor = catchAsyncError(async (req, res, next) => {
   const { postCode, transmission } = req.params;
   const { language } = req.query;
-  // console.log(language);
 
   if (!postCode)
     return next(new Errorhandler(404, `No suburb Postcode Found `));
@@ -181,9 +178,6 @@ export const forgotInstructorPassword = catchAsyncError(
 
     instructor.save();
 
-    // console.log(
-    // `http://localhost:3000/reset-password/instructor/${instructor?.resetPasswordToken}`
-    // );
     res.status(200).json({
       success: true,
       message: "Please Check Your Email, Password Reset Link Sent",
@@ -194,16 +188,12 @@ export const forgotInstructorPassword = catchAsyncError(
 export const resetPasswordInstructor = catchAsyncError(
   async (req, res, next) => {
     const { token, newPassword } = req.body;
-    // console.log(token, newPassword);
     if (!token || !newPassword)
       return next(new Errorhandler(404, `Token or Id Not Found`));
 
     const instructor = await Instructor.findOne({ resetPasswordToken: token })
       .select("+resetPasswordToken")
       .select("+resetPasswordTime");
-
-    console.log(instructor, "instructor");
-
     // matching the token
     if (Date.now() > instructor.resetPasswordTime) {
       return next(
@@ -244,7 +234,6 @@ export const editInstructor = catchAsyncError(async (req, res, next) => {
 // edit profile picture of instructor
 export const updateInstructorAvater = catchAsyncError(
   async (req, res, next) => {
-    // console.log(req.file);
     const bucket = gcloudStorage.bucket("my_instructor");
     // ===========Image upload handleing===============
     if (!req.file) {
@@ -288,8 +277,6 @@ export const updateInstructorAvater = catchAsyncError(
 // insert rating
 export const postRating = catchAsyncError(async (req, res, next) => {
   const { rating, review, instructor, booking } = req.body;
-
-  // console.log(booking, "current booking");
 
   if (!rating || !review || !instructor || !booking)
     return next(new Errorhandler(401, `Required Fields Not Found`));

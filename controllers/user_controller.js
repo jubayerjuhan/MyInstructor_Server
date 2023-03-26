@@ -47,10 +47,6 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
 
   user.save();
 
-  // // console.log(
-  //   `http://localhost:3000/reset-password/instructor/${user?.resetPasswordToken}`
-  // );
-
   res.status(200).json({
     success: true,
     message: "Please Check Your Email, Password Reset Link Sent",
@@ -91,7 +87,6 @@ export const addCredit = catchAsyncError(async (req, res, next) => {
   const user = await userModel.findById(req.user._id);
   user.credit = req.user.credit + parseInt(hour);
   user.save();
-  // console.log(user);
 
   res.status(200).json({
     success: true,
@@ -121,11 +116,9 @@ export const editUser = catchAsyncError(async (req, res, next) => {
 
 // update profile pic
 export const updateProfilePic = catchAsyncError(async (req, res, next) => {
-  // console.log(req.file);
   const bucket = gcloudStorage.bucket("my_instructor");
   // ===========Image upload handleing===============
   if (!req.file) {
-    // res.status(400).send("No file uploaded.");
     return;
   }
 
@@ -162,7 +155,6 @@ export const updateProfilePic = catchAsyncError(async (req, res, next) => {
 
 // upload image
 export const uploadFilesToServer = catchAsyncError(async (req, res, next) => {
-  console.log(req.body);
   const bucket = gcloudStorage.bucket("my_instructor");
   // ===========Image upload handleing===============
   if (!req.file) {

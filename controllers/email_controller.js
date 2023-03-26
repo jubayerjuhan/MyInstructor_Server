@@ -31,8 +31,7 @@ export const sendEmail = async (templateid, email, name, sms) => {
   };
   try {
     const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    // console.log(data);
   } catch (error) {
-    // console.log(error);
+    console.log(error);
   }
 };
