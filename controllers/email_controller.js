@@ -24,13 +24,10 @@ export const sendEmail = async (templateid, email, name, sms) => {
       SMS: sms,
       FIRSTNAME: name,
     },
-    headers: {
-      "X-Mailin-custom":
-        "custom_header_1:custom_value_1|custom_header_2:custom_value_2",
-    },
   };
   try {
     const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log(JSON.stringify(data));
   } catch (error) {
     console.log(error);
   }

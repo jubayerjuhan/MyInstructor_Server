@@ -81,6 +81,8 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   const booking = await Booking.findById(id).populate("user");
   const oldStatus = booking.status;
 
+  console.log(oldStatus, "old status...");
+
   const instructor = await Instructor.findById(booking.instructor);
 
   if (booking.status === "Ended")
@@ -117,7 +119,9 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   const sms = `Your Booking Status Was ${oldStatus}, Now It's Changed to ${
     booking.status
   }. Current Booking Status: ${JSON.stringify(booking.status).toUpperCase()}`;
-  sendEmail(6, booking.user.email, booking.user.name, sms);
+
+  console.log(sms, booking.user, "sms");
+  await sendEmail(6, booking.user.email, booking.user.firstName, sms);
 
   res.status(200).json({
     success: true,
