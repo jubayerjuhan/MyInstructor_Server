@@ -78,7 +78,9 @@ export const getEarningsByInstructor = catchAsyncError(
     // finding earnings by params
     const earnings = await EarningModel.find({
       instructor: id,
-    }).populate("learner", "firstName lastName");
+    })
+      .populate("learner", "firstName lastName")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
