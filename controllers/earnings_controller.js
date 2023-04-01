@@ -49,6 +49,7 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
     };
 
     const invoice = await generateInvoice(invoiceInfo);
+    console.log(invoice, "invoice");
 
     EarningModel.create({
       learner: booking.user._id,
@@ -72,19 +73,17 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
 
 export const getEarningsByInstructor = catchAsyncError(
   async (req, res, next) => {
-    const { id } = req.params;
-    console.log(id);
-
+    console.log(req.user._id, "user id");
     // finding earnings by params
     const earnings = await EarningModel.find({
-      instructor: id,
+      instructor: req.user._id,
     })
       .populate("learner", "firstName lastName")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
-      earnings,
+      earnings: earnings,
     });
   }
 );

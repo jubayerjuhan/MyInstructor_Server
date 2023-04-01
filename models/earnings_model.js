@@ -46,7 +46,7 @@ const EarningSchema = new mongoose.Schema(
     },
     invoice: {
       type: String,
-      required: [true, "Invoice Is Required"],
+      required: true,
     },
   },
   {
