@@ -13,6 +13,7 @@ import suburbRoute from "./routes/suburb_route.js";
 import giftCardRoute from "./routes/giftcard_route.js";
 import agreementRoute from "./routes/agreement_route.js";
 import conversationRoute from "./routes/conversation_route.js";
+import earningRoute from "./routes/earning_route.js";
 import { Server } from "socket.io";
 
 import http from "http";
@@ -24,6 +25,7 @@ import { Storage } from "@google-cloud/storage";
 import { allowedorigin, checkOrigin } from "./middlewares/checkOrigin.js";
 import { sendEmail } from "./middlewares/email/sendEmail.js";
 import moment from "moment";
+import { verifyInstructor } from "./middlewares/verify_user.js";
 
 // initializing app
 const app = express();
@@ -60,6 +62,7 @@ app.use("/api", giftCardRoute);
 app.use("/api", suburbRoute);
 app.use("/api/convo", conversationRoute);
 app.use("/api/agreement", agreementRoute);
+app.use("/api/earning", verifyInstructor, earningRoute);
 
 // image request
 app.use("/uploads", express.static("./tmp"), (req, res, next) => {

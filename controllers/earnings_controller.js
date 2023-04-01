@@ -1,8 +1,9 @@
 import { Suburbs } from "../models/subrubs_model.js";
-import EarningsModel from "../models/earnings_model.js";
+import EarningModel from "../models/earnings_model.js";
 import { generateInvoice } from "../invoice/generate_invoice/generateInvoice.js";
 import { errorMiddleware } from "../middlewares/error_middleware.js";
 import moment from "moment";
+import catchAsyncError from "../middlewares/catchAsyncError.js";
 
 export const addEarningsToInstructor = async (instructor, booking, next) => {
   return new Promise(async (resolve, reject) => {
@@ -48,8 +49,9 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
     };
 
     const invoice = await generateInvoice(invoiceInfo);
+    console.log(invoice, "invoice");
 
-    EarningsModel.create({
+    EarningModel.create({
       learner: booking.user._id,
       instructor: instructor._id,
       duration: booking.duration,
@@ -68,3 +70,20 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
       .catch((err) => reject(err));
   });
 };
+
+export const getEarningsByInstructor = catchAsyncError(
+  async (req, res, next) => {
+    console.log(req.user._id, "user id");
+    // finding earnings by params
+    const earnings = await EarningModel.find({
+      instructor: req.user._id,
+    })
+      .populate("learner", "firstName lastName")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      earnings: earnings,
+    });
+  }
+);
