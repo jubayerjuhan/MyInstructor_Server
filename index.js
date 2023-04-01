@@ -75,7 +75,7 @@ app.use(express.static("assets"));
 app.get("/", (req, res, next) => {
   res.status(200).json({
     success: true,
-    message: "My Instructor Server Is Up And Running.....",
+    message: `My Instructor Server Is Up And Running.....`,
   });
 });
 
