@@ -44,6 +44,11 @@ const EarningSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    paid: {
+      type: Boolean,
+      enum: [true, false],
+      default: false,
+    },
     invoice: {
       type: String,
       required: true,

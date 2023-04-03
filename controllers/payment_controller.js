@@ -1,7 +1,12 @@
 import Stripe from "stripe";
 import catchAsyncError from "../middlewares/catchAsyncError.js";
 import Errorhandler from "../middlewares/handle_error.js";
-const stripe = Stripe(process.env.STRIPE_KEY);
+import "dotenv/config";
+const stripe = Stripe(
+  process.env.NODE_ENV === "production"
+    ? process.env.STRIPE_KEY_LIVE
+    : process.env.STRIPE_KEY_TEST
+);
 
 let outsidePrice = 70;
 let insidePrice = 65;

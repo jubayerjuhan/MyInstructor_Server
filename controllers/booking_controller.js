@@ -13,6 +13,7 @@ export const makeBooking = catchAsyncError(async (req, res, next) => {
     return next(new Errorhandler(404, "Invalid Booking Information Provided"));
   const user = await userModel.findById(req.user._id);
 
+  console.log(req.user._id, "user of credit");
   if (req.body.type !== "Test Package") {
     if (user.credit < req.body.duration)
       // if the user has less credit

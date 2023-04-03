@@ -26,6 +26,8 @@ import { allowedorigin, checkOrigin } from "./middlewares/checkOrigin.js";
 import { sendEmail } from "./middlewares/email/sendEmail.js";
 import moment from "moment";
 import { verifyInstructor } from "./middlewares/verify_user.js";
+import EarningModel from "./models/earnings_model.js";
+import { Instructor } from "./models/instructor_model.js";
 
 // initializing app
 const app = express();
@@ -72,9 +74,49 @@ app.use("/uploads", express.static("./tmp"), (req, res, next) => {
 app.use(express.static("assets"));
 
 // home request
-app.get("/", (req, res, next) => {
+app.get("/", async (req, res, next) => {
+  const unpaidInstructors = await Instructor.aggregate([
+    {
+      $lookup: {
+        from: "earnings",
+        localField: "_id",
+        foreignField: "instructor",
+        as: "earnings",
+      },
+    },
+    {
+      $unwind: "$earnings",
+    },
+
+    {
+      $match: {
+        "earnings.paid": false,
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        firstName: { $first: "$firstName" },
+        lastName: { $first: "$lastName" },
+        email: { $first: "$email" },
+        totalUnpaidAmount: { $sum: "$earnings.subtotal" },
+      },
+    },
+
+    {
+      $project: {
+        _id: 1,
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        totalUnpaidAmount: 1,
+      },
+    },
+  ]);
+
   res.status(200).json({
     success: true,
+    unpaidInstructors,
     message: `My Instructor Server Is Up And Running.....`,
   });
 });
