@@ -87,3 +87,36 @@ export const getEarningsByInstructor = catchAsyncError(
     });
   }
 );
+
+// get total pending earnings for user
+export const getInstructorPendingEarning = catchAsyncError(
+  async (req, res, next) => {
+    const instructorId = req.user._id;
+
+    const instructorEarnings = await EarningModel.aggregate([
+      {
+        $match: {
+          instructor: instructorId,
+          paid: false,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUnpaidAmount: { $sum: "$subtotal" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalUnpaidAmount: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      amount: instructorEarnings[0]?.totalUnpaidAmount,
+    });
+  }
+);
