@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const EarningSchema = new mongoose.Schema(
   {
+    bookingId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "booking",
+      required: true,
+    },
     learner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
@@ -9,7 +14,7 @@ const EarningSchema = new mongoose.Schema(
     },
     instructor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Instructor",
+      ref: "instructor",
       required: true,
     },
     duration: {
