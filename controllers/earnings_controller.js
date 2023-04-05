@@ -1,8 +1,10 @@
 import { Suburbs } from "../models/subrubs_model.js";
 import EarningModel from "../models/earnings_model.js";
 import { generateInvoice } from "../invoice/generate_invoice/generateInvoice.js";
-import { errorMiddleware } from "../middlewares/error_middleware.js";
 import moment from "moment";
+import path from "path";
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 import catchAsyncError from "../middlewares/catchAsyncError.js";
 
 export const addEarningsToInstructor = async (instructor, booking, next) => {
@@ -27,7 +29,7 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
     // defining invoice information
     const invoiceInfo = {
       customerName: `${instructor.firstName} ${instructor.lastName}`,
-      products: [
+      items: [
         {
           description: `#${booking._id} - ${
             booking.type === "Booking" ? "Driving Lesson" : "Driving Test"
@@ -48,10 +50,13 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
       total: Number(total.toFixed(2)),
     };
 
-    const invoice = await generateInvoice(invoiceInfo);
+    const ejsPath = path.join(__dirname, "../invoice/ejs/invoice.ejs");
+    const invoice = await generateInvoice(invoiceInfo, ejsPath);
     console.log(invoice, "invoice");
 
     EarningModel.create({
+      bookingType: booking.type,
+      bookingId: booking._id,
       learner: booking.user._id,
       instructor: instructor._id,
       duration: booking.duration,

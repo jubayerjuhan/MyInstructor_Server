@@ -1,6 +1,7 @@
 import catchAsyncError from "../../../middlewares/catchAsyncError.js";
 import Errorhandler from "../../../middlewares/handle_error.js";
 import { Instructor } from "../../../models/instructor_model.js";
+import { generateFortnightReportPDF } from "./generate_earning_report.js";
 import { getInstructorPendingPaymentsById } from "./instructor_payments.js";
 
 export const fortnightPaymentInstructorList = catchAsyncError(
@@ -61,14 +62,23 @@ export const paySelectedInstructors = catchAsyncError(
       return next(new Errorhandler(404, "No Instructors Found To Pay"));
 
     // loop through all instructors and get their earnings info
-    instructors?.forEach(async (instructorId) => {
+    for (let i = 0; i < instructors.length; i++) {
+      const instructorId = instructors[i];
+      const instructor = await Instructor.findById(instructorId);
+
+      // if there is no instructor with that id then skipping it
+      if (!instructor) continue;
+
+      // get all pending payments by the instructor and generating the fortnightly reports
       try {
-        const payments = await getInstructorPendingPaymentsById(instructorId);
-        console.log(payments, "payments");
+        const { earnings, breakdown } = await getInstructorPendingPaymentsById(
+          instructorId
+        );
+        generateFortnightReportPDF(instructor, earnings, breakdown);
       } catch (error) {
         console.log(error);
       }
-    });
+    }
     //sending the response
     res.status(200).json({
       success: true,

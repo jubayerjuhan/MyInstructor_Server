@@ -7,6 +7,12 @@ const EarningSchema = new mongoose.Schema(
       ref: "booking",
       required: true,
     },
+
+    bookingType: {
+      type: String,
+      required: true,
+    },
+
     learner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
