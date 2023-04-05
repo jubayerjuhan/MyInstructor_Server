@@ -32,7 +32,9 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
       items: [
         {
           description: `#${booking._id} - ${
-            booking.type === "Booking" ? "Driving Lesson" : "Driving Test"
+            booking.type === "Test Package"
+              ? "Driving Test Package"
+              : "Driving Lesson"
           } - ${booking.user?.firstName}`,
           quantity: booking.duration,
           unitPrice: Number(unitPrice.toFixed(2)),
@@ -55,7 +57,7 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
     console.log(invoice, "invoice");
 
     EarningModel.create({
-      bookingType: booking.type,
+      bookingType: booking.type ? "Driving Lesson" : "Driving Test Package",
       bookingId: booking._id,
       learner: booking.user._id,
       instructor: instructor._id,

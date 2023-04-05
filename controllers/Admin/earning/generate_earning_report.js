@@ -25,15 +25,21 @@ export const generateFortnightReportPDF = async (
     subtotal: breakdown.subtotal,
     gst: breakdown.gst,
     total: breakdown.total,
+    inclusiveGst: breakdown.inclusiveGst,
+    bookingAmount: breakdown.bookingAmount,
     items: earnings.map((earning) => ({
       ...earning.toObject({ getters: true }),
-      description: `#${earning?.bookingId} - ${
-        earning.bookingType === "Booking" ? "Driving Lesson" : "Driving Test"
-      } - ${earning.learner?.firstName + earning.learner?.lastName}`,
+      date: moment(earning?.createdAt).format("DD MMMM YYYY"),
+      description: `#${earning?.bookingId} - ${earning.bookingType} - ${
+        earning.learner?.firstName + earning.learner?.lastName
+      }`,
     })),
   };
 
-  const ejsPath = path.join(__dirname, "../../../invoice/ejs/invoice.ejs");
+  const ejsPath = path.join(
+    __dirname,
+    "../../../invoice/ejs/fortnightly_report.ejs"
+  );
   const invoice = await generateInvoice(data, ejsPath);
   console.log(invoice);
 
