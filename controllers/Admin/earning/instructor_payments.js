@@ -35,6 +35,12 @@ export const getInstructorPendingPaymentsById = async (instructorId) => {
         earnings.reduce((acc, earning) => acc + earning.gst, 0).toFixed(2)
       );
 
+      const inclusiveGst = parseFloat(
+        earnings
+          .reduce((acc, earning) => acc + earning.inclusiveGst, 0)
+          .toFixed(2)
+      );
+
       const managementFee = parseFloat(
         earnings
           .reduce((acc, earning) => acc + earning.managementFee, 0)
@@ -42,7 +48,14 @@ export const getInstructorPendingPaymentsById = async (instructorId) => {
       );
       resolve({
         earnings,
-        breakdown: { bookingAmount, total, subtotal, managementFee, gst },
+        breakdown: {
+          bookingAmount,
+          total,
+          subtotal,
+          managementFee,
+          gst,
+          inclusiveGst,
+        },
       });
     } catch (error) {
       reject(error);
