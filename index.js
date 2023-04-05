@@ -64,7 +64,7 @@ app.use("/api", giftCardRoute);
 app.use("/api", suburbRoute);
 app.use("/api/convo", conversationRoute);
 app.use("/api/agreement", agreementRoute);
-app.use("/api/earning", verifyInstructor, earningRoute);
+app.use("/api/earning", earningRoute);
 
 // image request
 app.use("/uploads", express.static("./tmp"), (req, res, next) => {
@@ -75,48 +75,8 @@ app.use(express.static("assets"));
 
 // home request
 app.get("/", async (req, res, next) => {
-  const unpaidInstructors = await Instructor.aggregate([
-    {
-      $lookup: {
-        from: "earnings",
-        localField: "_id",
-        foreignField: "instructor",
-        as: "earnings",
-      },
-    },
-    {
-      $unwind: "$earnings",
-    },
-
-    {
-      $match: {
-        "earnings.paid": false,
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        firstName: { $first: "$firstName" },
-        lastName: { $first: "$lastName" },
-        email: { $first: "$email" },
-        totalUnpaidAmount: { $sum: "$earnings.subtotal" },
-      },
-    },
-
-    {
-      $project: {
-        _id: 1,
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        totalUnpaidAmount: 1,
-      },
-    },
-  ]);
-
   res.status(200).json({
     success: true,
-    unpaidInstructors,
     message: `My Instructor Server Is Up And Running.....`,
   });
 });
