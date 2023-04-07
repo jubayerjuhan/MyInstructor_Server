@@ -54,7 +54,6 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
 
     const ejsPath = path.join(__dirname, "../invoice/ejs/invoice.ejs");
     const invoice = await generateInvoice(invoiceInfo, ejsPath);
-    console.log(invoice, "invoice");
 
     EarningModel.create({
       bookingType: booking.type ? "Driving Lesson" : "Driving Test Package",

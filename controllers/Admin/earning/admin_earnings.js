@@ -1,7 +1,7 @@
 import catchAsyncError from "../../../middlewares/catchAsyncError.js";
 import Errorhandler from "../../../middlewares/handle_error.js";
 import { Instructor } from "../../../models/instructor_model.js";
-import { generateFortnightReportPDF } from "./generate_earning_report.js";
+import { generateAndSendFortnightReportPDF } from "./generate_earning_report.js";
 import { getInstructorPendingPaymentsById } from "./instructor_payments.js";
 
 export const fortnightPaymentInstructorList = catchAsyncError(
@@ -54,6 +54,7 @@ export const fortnightPaymentInstructorList = catchAsyncError(
 // * pay selected instructors
 export const paySelectedInstructors = catchAsyncError(
   async (req, res, next) => {
+    let failed = 0;
     // get instructors array from the request
     const { instructors } = req.body;
 
@@ -74,14 +75,29 @@ export const paySelectedInstructors = catchAsyncError(
         const { earnings, breakdown } = await getInstructorPendingPaymentsById(
           instructorId
         );
-        generateFortnightReportPDF(instructor, earnings, breakdown);
+        // generating fortnightly payment report for instructor -> PDF file
+        try {
+          await generateAndSendFortnightReportPDF(
+            instructor,
+            earnings,
+            breakdown
+          );
+        } catch (error) {
+          failed++;
+          continue;
+        }
       } catch (error) {
-        console.log(error);
+        failed++;
+        continue;
       }
     }
     //sending the response
     res.status(200).json({
       success: true,
+
+      message: `Instructor Payment Fortnightly Report Sent  ${
+        failed > 0 ? `${failed} Failed` : "Successfully"
+      }`,
     });
   }
 );

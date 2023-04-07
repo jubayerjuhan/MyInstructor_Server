@@ -1,7 +1,8 @@
 import moment from "moment";
 import path from "path";
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
 import { generateInvoice } from "../../../invoice/generate_invoice/generateInvoice.js";
+import { sendEmail } from "../../../middlewares/email/sendEmail.js";
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 /**
 this function generates a fortnightly pdf payment report with ejs
@@ -10,7 +11,7 @@ this function generates a fortnightly pdf payment report with ejs
 @returns {Promise} A promise that resolves with the generated PDF report.
 @throws {Error} - Throws an error if anything wrong happens
 */
-export const generateFortnightReportPDF = async (
+export const generateAndSendFortnightReportPDF = async (
   instructor,
   earnings,
   breakdown
@@ -36,13 +37,39 @@ export const generateFortnightReportPDF = async (
     })),
   };
 
+  // the path where the ejs file located for this pdf
   const ejsPath = path.join(
     __dirname,
     "../../../invoice/ejs/fortnightly_report.ejs"
   );
-  const invoice = await generateInvoice(data, ejsPath);
-  console.log(invoice);
 
-  // console.log(instructor, earnings);
-  //   generateInvoice();
+  return new Promise(async (resolve, reject) => {
+    // return console.log(instructor.email, "instructor");
+    try {
+      // generating the invoice through pdf maker
+      const invoice = await generateInvoice(data, ejsPath);
+
+      try {
+        // sending the generated report PDF to instructor by email
+        await sendEmail([
+          [{ name: instructor?.firstName, email: instructor?.email }],
+          9,
+          { instructorName: instructor.firstName },
+          [
+            {
+              url: invoice,
+              name: `Fortnightly Report ${moment().format("DD MMMM YYYY")}.pdf`,
+            },
+          ],
+        ]);
+        resolve(invoice);
+      } catch (error) {
+        // reject the promise if the email sending is false
+        reject(error);
+      }
+    } catch (error) {
+      // reject the error if invoice generating failed
+      reject(error);
+    }
+  });
 };
