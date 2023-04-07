@@ -1,3 +1,4 @@
+import Errorhandler from "../../../middlewares/handle_error.js";
 import EarningModel from "../../../models/earnings_model.js";
 
 /**
@@ -5,17 +6,21 @@ import EarningModel from "../../../models/earnings_model.js";
  * @async
  * @function
  * @param {string} instructorId - The ID of the instructor whose pending payments should be retrieved.
+ * @param {import('express').NextFunction} next - The Express next function.
  * @returns {Promise<Object>} A Promise that resolves to an object containing an array of earnings objects and a breakdown object with booking amount, total, subtotal, management fee, and GST.
  * @throws {Error} Throws an error if there was an error retrieving the earnings from the database.
  */
 
-export const getInstructorPendingPaymentsById = async (instructorId) => {
+export const getInstructorPendingPaymentsById = async (instructorId, next) => {
   return new Promise(async (resolve, reject) => {
     try {
       const earnings = await EarningModel.find({
         instructor: instructorId,
         paid: false,
       }).populate("learner", "firstName lastName");
+
+      if (earnings.length <= 0)
+        return reject("No earnings found for this instructor");
 
       const subtotal = parseFloat(
         earnings.reduce((acc, earning) => acc + earning.subtotal, 0).toFixed(2)

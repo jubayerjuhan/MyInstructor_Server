@@ -51,7 +51,7 @@ export const generateAndSendFortnightReportPDF = async (
 
       try {
         // sending the generated report PDF to instructor by email
-        await sendEmail([
+        await sendEmail(
           [{ name: instructor?.firstName, email: instructor?.email }],
           9,
           { instructorName: instructor.firstName },
@@ -60,8 +60,8 @@ export const generateAndSendFortnightReportPDF = async (
               url: invoice,
               name: `Fortnightly Report ${moment().format("DD MMMM YYYY")}.pdf`,
             },
-          ],
-        ]);
+          ]
+        );
         resolve(invoice);
       } catch (error) {
         // reject the promise if the email sending is false

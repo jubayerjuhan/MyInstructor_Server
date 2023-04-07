@@ -1,5 +1,6 @@
 import catchAsyncError from "../../../middlewares/catchAsyncError.js";
 import Errorhandler from "../../../middlewares/handle_error.js";
+import EarningModel from "../../../models/earnings_model.js";
 import { Instructor } from "../../../models/instructor_model.js";
 import { generateAndSendFortnightReportPDF } from "./generate_earning_report.js";
 import { getInstructorPendingPaymentsById } from "./instructor_payments.js";
@@ -82,11 +83,15 @@ export const paySelectedInstructors = catchAsyncError(
             earnings,
             breakdown
           );
+          // making every earning of instructor status paid
+          await makeAllEarningStatusToPaid(instructor._id);
         } catch (error) {
+          console.log(error);
           failed++;
           continue;
         }
       } catch (error) {
+        console.log(error);
         failed++;
         continue;
       }
@@ -95,9 +100,29 @@ export const paySelectedInstructors = catchAsyncError(
     res.status(200).json({
       success: true,
 
-      message: `Instructor Payment Fortnightly Report Sent  ${
+      message: `Instructor Payment Fortnightly Report Sent ${
         failed > 0 ? `${failed} Failed` : "Successfully"
       }`,
     });
   }
 );
+
+/**
+ * this function will make every unpaid earning status of the instructor to paid
+ * @param {String} instructorid - this function will take instructorId as param
+ * @returns {Promise} its a void function doesn't return anything
+ */
+const makeAllEarningStatusToPaid = async (instructorId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // updating all of the earnings of instructor from {paid: false} to {paid: true}
+      await EarningModel.updateMany(
+        { instructor: instructorId, paid: false },
+        { paid: true }
+      );
+      resolve(true);
+    } catch (error) {
+      reject(false);
+    }
+  });
+};
