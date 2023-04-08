@@ -122,7 +122,7 @@ export const getInstructorPendingEarning = catchAsyncError(
 
     res.status(200).json({
       success: true,
-      amount: instructorEarnings[0]?.totalUnpaidAmount,
+      amount: instructorEarnings[0]?.totalUnpaidAmount || 0,
     });
   }
 );
