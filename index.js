@@ -14,20 +14,15 @@ import giftCardRoute from "./routes/giftcard_route.js";
 import agreementRoute from "./routes/agreement_route.js";
 import conversationRoute from "./routes/conversation_route.js";
 import earningRoute from "./routes/earning_route.js";
+import adminEarningRoute from "./routes/admin/admin_earning_route.js";
 import { Server } from "socket.io";
 
 import http from "http";
-import path, { dirname } from "path";
 import bodyParser from "body-parser";
 import cors from "cors";
 import "dotenv/config";
 import { Storage } from "@google-cloud/storage";
 import { allowedorigin, checkOrigin } from "./middlewares/checkOrigin.js";
-import { sendEmail } from "./middlewares/email/sendEmail.js";
-import moment from "moment";
-import { verifyInstructor } from "./middlewares/verify_user.js";
-import EarningModel from "./models/earnings_model.js";
-import { Instructor } from "./models/instructor_model.js";
 
 // initializing app
 const app = express();
@@ -59,7 +54,7 @@ app.use("/api", instructorApplicantRoute);
 app.use("/api", instructorRoute);
 app.use("/api", paymentRoute);
 app.use("/api", bookingRoute);
-app.use("/api/admin", adminRoute);
+app.use("/api/admin", adminRoute, adminEarningRoute);
 app.use("/api", giftCardRoute);
 app.use("/api", suburbRoute);
 app.use("/api/convo", conversationRoute);
