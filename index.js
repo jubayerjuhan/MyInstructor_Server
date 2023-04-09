@@ -59,7 +59,7 @@ app.use("/api", instructorApplicantRoute);
 app.use("/api", instructorRoute);
 app.use("/api", paymentRoute);
 app.use("/api", bookingRoute);
-app.use("/api/admin", checkOrigin, adminRoute);
+app.use("/api/admin", adminRoute);
 app.use("/api", giftCardRoute);
 app.use("/api", suburbRoute);
 app.use("/api/convo", conversationRoute);

@@ -5,6 +5,17 @@ import { Instructor } from "../../../models/instructor_model.js";
 import { generateAndSendFortnightReportPDF } from "./generate_earning_report.js";
 import { getInstructorPendingPaymentsById } from "./instructor_payments.js";
 
+export const getAllEarningsListAdmin = catchAsyncError(async (req, res) => {
+  const earnings = await EarningModel.find().populate(
+    "instructor learner",
+    "firstName lastName avater"
+  );
+
+  res.status(200).json({
+    success: true,
+    earnings,
+  });
+});
 export const fortnightPaymentInstructorList = catchAsyncError(
   async (req, res, next) => {
     const instructors = await Instructor.aggregate([
