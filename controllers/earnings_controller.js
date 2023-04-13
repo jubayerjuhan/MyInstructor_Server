@@ -1,8 +1,10 @@
 import { Suburbs } from "../models/subrubs_model.js";
 import EarningModel from "../models/earnings_model.js";
 import { generateInvoice } from "../invoice/generate_invoice/generateInvoice.js";
-import { errorMiddleware } from "../middlewares/error_middleware.js";
 import moment from "moment";
+import path from "path";
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 import catchAsyncError from "../middlewares/catchAsyncError.js";
 
 export const addEarningsToInstructor = async (instructor, booking, next) => {
@@ -27,10 +29,12 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
     // defining invoice information
     const invoiceInfo = {
       customerName: `${instructor.firstName} ${instructor.lastName}`,
-      products: [
+      items: [
         {
           description: `#${booking._id} - ${
-            booking.type === "Booking" ? "Driving Lesson" : "Driving Test"
+            booking.type === "Test Package"
+              ? "Driving Test Package"
+              : "Driving Lesson"
           } - ${booking.user?.firstName}`,
           quantity: booking.duration,
           unitPrice: Number(unitPrice.toFixed(2)),
@@ -48,10 +52,12 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
       total: Number(total.toFixed(2)),
     };
 
-    const invoice = await generateInvoice(invoiceInfo);
-    console.log(invoice, "invoice");
+    const ejsPath = path.join(__dirname, "../invoice/ejs/invoice.ejs");
+    const invoice = await generateInvoice(invoiceInfo, ejsPath);
 
     EarningModel.create({
+      bookingType: booking.type ? "Driving Lesson" : "Driving Test Package",
+      bookingId: booking._id,
       learner: booking.user._id,
       instructor: instructor._id,
       duration: booking.duration,
@@ -81,9 +87,43 @@ export const getEarningsByInstructor = catchAsyncError(
       .populate("learner", "firstName lastName")
       .sort({ createdAt: -1 });
 
+    console.log(earnings);
     res.status(200).json({
       success: true,
       earnings: earnings,
+    });
+  }
+);
+
+// get total pending earnings for user
+export const getInstructorPendingEarning = catchAsyncError(
+  async (req, res, next) => {
+    const instructorId = req.user._id;
+
+    const instructorEarnings = await EarningModel.aggregate([
+      {
+        $match: {
+          instructor: instructorId,
+          paid: false,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUnpaidAmount: { $sum: "$subtotal" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalUnpaidAmount: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      amount: instructorEarnings[0]?.totalUnpaidAmount || 0,
     });
   }
 );

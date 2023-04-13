@@ -119,7 +119,7 @@
           <p class="company-email">admin@myinstructor.com.au</p>
         </div>
       </div>
-      <h1 class="main-title">Invoice</h1>
+      <h1 class="main-title">Fortnightly Report</h1>
       <div class="invoice-information-wrapper">
         <div class="customer">
           <p class="to">To</p>
@@ -138,6 +138,7 @@
       <table class="table">
         <thead>
           <tr>
+            <th colspan="3">Date</th>
             <th colspan="4">Description</th>
             <th colspan="3">Quantity</th>
             <th colspan="3">Unit Price</th>
@@ -148,30 +149,36 @@
         <tbody>
           <% items.forEach(function(item) { %>
           <tr>
+            <td colspan="3"><%= item.date %></td>
             <td colspan="4"><%= item.description %></td>
-            <td colspan="3"><%= item.quantity %></td>
+            <td colspan="3"><%= item.duration %></td>
             <td colspan="3">$<%= item.unitPrice %></td>
-            <td colspan="3">$<%= item.gst %></td>
-            <td colspan="3">$<%= item.amount %></td>
+            <td colspan="3">$<%= item.inclusiveGst %></td>
+            <td colspan="3">$<%= item.bookingAmount %></td>
           </tr>
           <% }); %>
           <tr>
-            <td colspan="13" class="management-fee">Management Fee (20%)</td>
-            <td colspan="4">$<%= managementFee %></td>
+            <td colspan="13" class="blank-column"></td>
+            <td colspan="3">$<%= inclusiveGst %></td>
+            <td colspan="3">$<%= bookingAmount %></td>
+          </tr>
+          <tr>
+            <td colspan="16" class="management-fee">Management Fee (20%)</td>
+            <td colspan="3">$<%= managementFee %></td>
           </tr>
 
           <tr>
-            <td colspan="13" class="subtotal">Subtotal</td>
-            <td colspan="4">$<%= subtotal %></td>
+            <td colspan="16" class="subtotal">Subtotal</td>
+            <td colspan="3">$<%= subtotal %></td>
           </tr>
           <tr>
-            <td colspan="13" class="gst">GST @ 10%</td>
-            <td colspan="4">$<%= gst %></td>
+            <td colspan="16" class="gst">GST @ 10%</td>
+            <td colspan="3">$<%= gst %></td>
           </tr>
 
           <tr>
-            <td colspan="13" class="total"><strong>Total AUD</strong></td>
-            <td colspan="4"><strong>$<%= total %></strong></td>
+            <td colspan="16" class="total"><strong>Total AUD</strong></td>
+            <td colspan="3"><strong>$<%= total %></strong></td>
           </tr>
         </tbody>
       </table>

@@ -11,7 +11,12 @@ import { sendEmail } from "./email_controller.js";
 export const makeBooking = catchAsyncError(async (req, res, next) => {
   if (!req.body.duration)
     return next(new Errorhandler(404, "Invalid Booking Information Provided"));
+
   const user = await userModel.findById(req.user._id);
+
+  console.log(req.user._id, "user of credit");
+
+  if (!req.body.type) req.body.type === "Booking";
 
   if (req.body.type !== "Test Package") {
     if (user.credit < req.body.duration)
@@ -81,8 +86,6 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   const booking = await Booking.findById(id).populate("user");
   const oldStatus = booking.status;
 
-  console.log(oldStatus, "old status...");
-
   const instructor = await Instructor.findById(booking.instructor);
 
   if (booking.status === "Ended")
@@ -111,6 +114,9 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
         booking,
       });
     } catch (error) {
+      console.log(error, "error");
+      booking.status = oldStatus;
+      booking.save();
       return next(new Errorhandler(500, "Can't Generate Invoice"));
     }
   }

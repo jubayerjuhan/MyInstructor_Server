@@ -1,7 +1,14 @@
 import { Router } from "express";
-import { getEarningsByInstructor } from "../controllers/earnings_controller.js";
+import {
+  getEarningsByInstructor,
+  getInstructorPendingEarning,
+} from "../controllers/earnings_controller.js";
+import { verifyAdmin, verifyInstructor } from "../middlewares/verify_user.js";
 const router = Router();
 
-router.route("/:id").get(getEarningsByInstructor);
+router.route("/list").get(verifyInstructor, getEarningsByInstructor);
+router.route("/amount").get(verifyInstructor, getInstructorPendingEarning);
+
+// here is the options for admin on the
 
 export default router;

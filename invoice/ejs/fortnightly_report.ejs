@@ -119,18 +119,18 @@
           <p class="company-email">admin@myinstructor.com.au</p>
         </div>
       </div>
-      <h1 class="main-title">Invoice</h1>
+      <h1 class="main-title">Fortnightly Report</h1>
       <div class="invoice-information-wrapper">
         <div class="customer">
           <p class="to">To</p>
           <p class="name"><%= customerName %></p>
-          <p class="abn">ABN 123456789</p>
-          <p class="address">4 MECCA, Tarneit, Victoria, 3029</p>
+          <p class="abn">ABN <%= customerAbn %></p>
+          <p class="address"><%= customerAddress %></p>
         </div>
         <div class="invoice-info">
-          <p class="id"><span>ID</span>123456</p>
-          <p class="date"><span>Date</span>19 March 2023</p>
-          <p class="amount"><span>Amount</span>$20</p>
+          <p class="id"><span>ID</span><%=invoiceId%></p>
+          <p class="date"><span>Date</span><%=date%></p>
+          <p class="amount"><span>Amount</span>$<%= subtotal %></p>
           <p class="description"><span>Description</span>MST Transfer</p>
         </div>
       </div>
@@ -138,34 +138,47 @@
       <table class="table">
         <thead>
           <tr>
-            <th colspan="4">Description Of Earning</th>
-            <th colspan="4">Duration</th>
-            <th colspan="4">Amount</th>
+            <th colspan="3">Date</th>
+            <th colspan="4">Description</th>
+            <th colspan="3">Quantity</th>
+            <th colspan="3">Unit Price</th>
+            <th colspan="3">GST</th>
+            <th colspan="3">Amount AUD</th>
           </tr>
         </thead>
         <tbody>
-          <% products.forEach(function(product) { %>
+          <% items.forEach(function(item) { %>
           <tr>
-            <td colspan="4"><%= product.name %></td>
-            <td colspan="4"><%= product.quantity %></td>
-            <td colspan="4">$<%= product.price %></td>
+            <td colspan="3"><%= item.date %></td>
+            <td colspan="4"><%= item.description %></td>
+            <td colspan="3"><%= item.duration %></td>
+            <td colspan="3">$<%= item.unitPrice %></td>
+            <td colspan="3">$<%= item.inclusiveGst %></td>
+            <td colspan="3">$<%= item.bookingAmount %></td>
           </tr>
           <% }); %>
           <tr>
-            <td colspan="8" class="subtotal">Subtotal</td>
-            <td>$<%= subtotal %></td>
+            <td colspan="13" class="blank-column"></td>
+            <td colspan="3">$<%= inclusiveGst %></td>
+            <td colspan="3">$<%= bookingAmount %></td>
           </tr>
           <tr>
-            <td colspan="8" class="gst">GST</td>
-            <td>( - ) $<%= gst %></td>
+            <td colspan="16" class="management-fee">Management Fee (20%)</td>
+            <td colspan="3">$<%= managementFee %></td>
+          </tr>
+
+          <tr>
+            <td colspan="16" class="subtotal">Subtotal</td>
+            <td colspan="3">$<%= subtotal %></td>
           </tr>
           <tr>
-            <td colspan="8" class="service-fee">Service Fee (20%)</td>
-            <td>( - ) $<%= serviceFee %></td>
+            <td colspan="16" class="gst">GST @ 10%</td>
+            <td colspan="3">$<%= gst %></td>
           </tr>
+
           <tr>
-            <td colspan="8" class="total"><strong>Total</strong></td>
-            <td><strong>$<%= total %></strong></td>
+            <td colspan="16" class="total"><strong>Total AUD</strong></td>
+            <td colspan="3"><strong>$<%= total %></strong></td>
           </tr>
         </tbody>
       </table>

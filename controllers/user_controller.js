@@ -128,27 +128,29 @@ export const updateProfilePic = catchAsyncError(async (req, res, next) => {
     resumable: false,
   });
 
-  blobStream.on("error", (err) => {
-    next(err);
-    res.status(500).json({
-      success: false,
-    });
-  });
+  // blobStream.on("error", (err) => {
+  //   next(err);
+  //   res.status(500).json({
+  //     success: false,
+  //   });
+  // });
 
   blobStream.on("finish", async () => {
     // The public URL can be used to directly access the file via HTTP.
     const publicUrl = format(
       `https://storage.googleapis.com/${bucket.name}/${blob.name}`
     );
+    console.log(publicUrl, "public url...");
     const user = await userModel.findById(req.user._id);
     user.avater = publicUrl;
     user.save();
 
-    // response
-    return res.status(200).json({
-      success: true,
-      user,
-    });
+    if (publicUrl)
+      // response
+      return res.status(200).json({
+        success: true,
+        user,
+      });
   });
   blobStream.end(req.file.buffer);
 });
