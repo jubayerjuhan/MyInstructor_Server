@@ -110,7 +110,6 @@ export const paySelectedInstructors = catchAsyncError(
     //sending the response
     res.status(200).json({
       success: true,
-
       message: `Instructor Payment Fortnightly Report Sent ${
         failed > 0 ? `${failed} Failed` : "Successfully"
       }`,

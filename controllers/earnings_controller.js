@@ -87,6 +87,7 @@ export const getEarningsByInstructor = catchAsyncError(
       .populate("learner", "firstName lastName")
       .sort({ createdAt: -1 });
 
+    console.log(earnings);
     res.status(200).json({
       success: true,
       earnings: earnings,
