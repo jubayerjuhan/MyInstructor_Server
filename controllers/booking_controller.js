@@ -86,12 +86,10 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   const booking = await Booking.findById(id).populate("user");
   const oldStatus = booking.status;
 
-  const instructor = await Instructor.findById(booking.instructor);
-
   if (booking.status === "Ended")
     return next(new Errorhandler(403, "Booking Already Ended"));
   booking.status = status;
-  booking.save();
+  await booking.save();
 
   if (booking.status === "Ended") {
     const instructor = await Instructor.findById(booking.instructor);
