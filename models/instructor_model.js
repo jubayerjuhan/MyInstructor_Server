@@ -118,6 +118,30 @@ const instructorSchema = mongoose.Schema({
     enum: [true, false],
     default: false,
   },
+
+  paymentInfo: {
+    bankAccountNumber: {
+      type: Number,
+      required: true,
+    },
+    bsbNumber: {
+      type: Number,
+      required: true,
+    },
+  },
+  additionalInfo: {
+    abnNumber: {
+      type: Number,
+      required: true,
+    },
+    invoiceAddress: {
+      abnNumber: {
+        type: String,
+        required: true,
+      },
+    },
+  },
+
   userType: {
     type: String,
     default: "instructor",
