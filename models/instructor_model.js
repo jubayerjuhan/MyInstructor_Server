@@ -135,10 +135,8 @@ const instructorSchema = mongoose.Schema({
       required: true,
     },
     invoiceAddress: {
-      abnNumber: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      required: true,
     },
   },
 

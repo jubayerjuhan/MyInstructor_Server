@@ -14,7 +14,10 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
   const car = JSON.parse(req.body.car);
   const allSubs = JSON.parse(req.body.serviceSuburbs);
 
-  const languages = JSON.parse(req.body.languages);
+  const paymentInfo = JSON.parse(req.body?.paymentInfo);
+  const additionalInfo = JSON.parse(req.body?.additionalInfo);
+  const languages = JSON.parse(req.body?.languages);
+
   // ===========Image upload handleing===============
   if (!req.file) {
     // res.status(400).send("No file uploaded.");
@@ -45,25 +48,33 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
         new Errorhandler(500, "Instructor Already Exist With This Email")
       );
 
-    const instructor = await Instructor.create({
-      ...req.body,
-      avater: publicUrl,
-      car,
-      languages,
-      serviceSuburbs: {
-        suburbs: allSubs.suburbs,
-      },
-    });
+    try {
+      const instructor = await Instructor.create({
+        ...req.body,
+        avater: publicUrl,
+        car,
+        languages,
+        serviceSuburbs: {
+          suburbs: allSubs.suburbs,
+        },
+        paymentInfo,
+        additionalInfo,
+      });
 
-    const sms = `email : ${instructor.email}
+      // sending email after creating the account
+      const sms = `email : ${instructor.email}
      \n \n
     password: ${req.body.password}`;
-    sendEmail(3, instructor.email, instructor.firstName, sms);
+      sendEmail(3, instructor.email, instructor.firstName, sms);
 
-    res.status(200).json({
-      success: true,
-      instructor,
-    });
+      res.status(200).json({
+        success: true,
+        instructor,
+      });
+    } catch (error) {
+      console.log(error);
+      return next(new Errorhandler(404, "All Information Not Provided"));
+    }
   });
   blobStream.end(req.file.buffer);
 });
