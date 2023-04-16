@@ -13,9 +13,6 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
 
   const car = JSON.parse(req.body.car);
   const allSubs = JSON.parse(req.body.serviceSuburbs);
-
-  const paymentInfo = JSON.parse(req.body?.paymentInfo);
-  const additionalInfo = JSON.parse(req.body?.additionalInfo);
   const languages = JSON.parse(req.body?.languages);
 
   // ===========Image upload handleing===============
@@ -57,8 +54,6 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
         serviceSuburbs: {
           suburbs: allSubs.suburbs,
         },
-        paymentInfo,
-        additionalInfo,
       });
 
       // sending email after creating the account

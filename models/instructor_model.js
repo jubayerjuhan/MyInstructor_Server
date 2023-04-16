@@ -119,25 +119,22 @@ const instructorSchema = mongoose.Schema({
     default: false,
   },
 
-  paymentInfo: {
-    bankAccountNumber: {
-      type: Number,
-      required: true,
-    },
-    bsbNumber: {
-      type: Number,
-      required: true,
-    },
+  bankAccountNumber: {
+    type: String,
+    required: true,
   },
-  additionalInfo: {
-    abnNumber: {
-      type: Number,
-      required: true,
-    },
-    invoiceAddress: {
-      type: String,
-      required: true,
-    },
+  bsbNumber: {
+    type: String,
+    required: true,
+  },
+
+  abnNumber: {
+    type: String,
+    required: true,
+  },
+  invoiceAddress: {
+    type: String,
+    required: true,
   },
 
   userType: {

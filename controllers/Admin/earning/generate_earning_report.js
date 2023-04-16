@@ -18,8 +18,8 @@ export const generateAndSendFortnightReportPDF = async (
 ) => {
   const data = {
     customerName: `${instructor.firstName} ${instructor.lastName}`,
-    customerAbn: `123469485094`,
-    customerAddress: "Nawabganj Dhaka Bangladesh",
+    customerAbn: instructor?.abnNumber,
+    customerAddress: instructor?.invoiceAddress,
     invoiceId: 12028930389233,
     date: moment().format("DD MMMM YYYY"),
     managementFee: breakdown.managementFee,
@@ -53,8 +53,11 @@ export const generateAndSendFortnightReportPDF = async (
         // sending the generated report PDF to instructor by email
         await sendEmail(
           [{ name: instructor?.firstName, email: instructor?.email }],
-          9,
-          { instructorName: instructor.firstName },
+          10,
+          {
+            instructorName: instructor.firstName,
+            date: moment().format("DD MMMM YYYY"),
+          },
           [
             {
               url: invoice,
