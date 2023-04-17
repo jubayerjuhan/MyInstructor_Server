@@ -1,28 +1,42 @@
+// core imports
 import express from "express";
+import http from "http";
+import bodyParser from "body-parser";
+import cors from "cors";
+import "dotenv/config";
 
+// database connection function
 import { connectToDatabase } from "./database/database.js";
+// error catcher middleware
 import { errorMiddleware } from "./middlewares/error_middleware.js";
 
+// importing routes
 import userRoutes from "./routes/user_routes.js";
 import instructorApplicantRoute from "./routes/instructor_applicant_route.js";
 import instructorRoute from "./routes/instructor_routes.js";
 import paymentRoute from "./routes/payment_route.js";
 import bookingRoute from "./routes/booking_route.js";
 import adminRoute from "./routes/admin_route.js";
+import adminFortnightPaymentRoute from "./routes/admin/admin_fortnightly_payment_routes.js";
+import fortnightlyPaymentRoute from "./routes/fortnightly_payment_route.js";
 import suburbRoute from "./routes/suburb_route.js";
 import giftCardRoute from "./routes/giftcard_route.js";
 import agreementRoute from "./routes/agreement_route.js";
 import conversationRoute from "./routes/conversation_route.js";
 import earningRoute from "./routes/earning_route.js";
 import adminEarningRoute from "./routes/admin/admin_earning_route.js";
+
+// Socket Server
 import { Server } from "socket.io";
 
-import http from "http";
-import bodyParser from "body-parser";
-import cors from "cors";
-import "dotenv/config";
+// google cloud storage
 import { Storage } from "@google-cloud/storage";
+
+// allowed origin and check origin
 import { allowedorigin, checkOrigin } from "./middlewares/checkOrigin.js";
+
+// Verifying Middleware Of Instructor
+import { verifyInstructor } from "./middlewares/verify_user.js";
 
 // initializing app
 const app = express();
@@ -54,12 +68,18 @@ app.use("/api", instructorApplicantRoute);
 app.use("/api", instructorRoute);
 app.use("/api", paymentRoute);
 app.use("/api", bookingRoute);
-app.use("/api/admin", adminRoute, adminEarningRoute);
+app.use(
+  "/api/admin",
+  adminRoute,
+  adminEarningRoute,
+  adminFortnightPaymentRoute
+);
 app.use("/api", giftCardRoute);
 app.use("/api", suburbRoute);
 app.use("/api/convo", conversationRoute);
 app.use("/api/agreement", agreementRoute);
 app.use("/api/earning", earningRoute);
+app.use("/api/fortnightly-payment", verifyInstructor, fortnightlyPaymentRoute);
 
 // image request
 app.use("/uploads", express.static("./tmp"), (req, res, next) => {

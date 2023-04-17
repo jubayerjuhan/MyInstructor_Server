@@ -54,12 +54,7 @@ export const generateAndSendFortnightReportPDF = async (
        * fortnightly_payment_model
        **/
       try {
-        await addFortnightlyPayment(
-          invoice,
-          instructor?._id,
-          earnings,
-          breakdown
-        );
+        await addFortnightlyPayment(invoice, instructor?._id, breakdown);
       } catch (error) {
         // rejecting the promise with error if we can't add the fortnightly payment on database
         reject(error);
