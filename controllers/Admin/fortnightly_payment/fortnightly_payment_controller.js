@@ -35,9 +35,11 @@ export const addFortnightlyPayment = async (
 export const AdminGetAllFortnightlyPayments = catchAsyncError(
   async (req, res, next) => {
     // getting all fortnightly payments from Db
-    const fortnightlyPayments = await FortnightlyPaymentModel.find().sort({
-      createdAt: -1,
-    });
+    const fortnightlyPayments = await FortnightlyPaymentModel.find()
+      .sort({
+        createdAt: -1,
+      })
+      .populate("instructor");
 
     res.status(200).json({
       success: true,
