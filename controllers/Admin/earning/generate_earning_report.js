@@ -2,6 +2,7 @@ import moment from "moment";
 import path from "path";
 import { generateInvoice } from "../../../invoice/generate_invoice/generateInvoice.js";
 import { sendEmail } from "../../../middlewares/email/sendEmail.js";
+import { addFortnightlyPayment } from "../fortnightly_payment/fortnightly_payment_controller.js";
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 /**
@@ -18,8 +19,8 @@ export const generateAndSendFortnightReportPDF = async (
 ) => {
   const data = {
     customerName: `${instructor.firstName} ${instructor.lastName}`,
-    customerAbn: `123469485094`,
-    customerAddress: "Nawabganj Dhaka Bangladesh",
+    customerAbn: instructor?.abnNumber,
+    customerAddress: instructor?.invoiceAddress,
     invoiceId: 12028930389233,
     date: moment().format("DD MMMM YYYY"),
     managementFee: breakdown.managementFee,
@@ -48,13 +49,26 @@ export const generateAndSendFortnightReportPDF = async (
     try {
       // generating the invoice through pdf maker
       const invoice = await generateInvoice(data, ejsPath);
+      /**
+       * generating the fortnightly payment to the database with
+       * fortnightly_payment_model
+       **/
+      try {
+        await addFortnightlyPayment(invoice, instructor?._id, breakdown);
+      } catch (error) {
+        // rejecting the promise with error if we can't add the fortnightly payment on database
+        reject(error);
+      }
 
       try {
         // sending the generated report PDF to instructor by email
         await sendEmail(
           [{ name: instructor?.firstName, email: instructor?.email }],
-          9,
-          { instructorName: instructor.firstName },
+          10,
+          {
+            instructorName: instructor.firstName,
+            date: moment().format("DD MMMM YYYY"),
+          },
           [
             {
               url: invoice,
