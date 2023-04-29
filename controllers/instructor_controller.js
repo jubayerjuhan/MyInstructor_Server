@@ -139,6 +139,8 @@ export const searchInstructor = catchAsyncError(async (req, res, next) => {
     transmissionType: { $regex: transmission, $options: "i" },
   });
 
+  console.log(instructors, "instructors...");
+
   res.status(200).json({
     success: true,
     instructors,

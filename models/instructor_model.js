@@ -7,20 +7,33 @@ var validateEmail = function (email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return re.test(email);
 };
-
 const availabilitySchema = new mongoose.Schema({
   day: {
     type: String,
     required: true,
+    enum: [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ],
   },
-  startTime: {
-    type: String,
-    required: true,
-  },
-  endTime: {
-    type: String,
-    required: true,
-  },
+  slots: [
+    {
+      startTime: {
+        type: String,
+        required: true,
+      },
+      endTime: {
+        type: String,
+        required: true,
+      },
+      _id: false, // disable _id field
+    },
+  ],
 });
 
 const instructorSchema = mongoose.Schema(
@@ -164,6 +177,20 @@ const instructorSchema = mongoose.Schema(
 instructorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
+
+  if (!this.availability || this.availability.length === 0) {
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    this.availability = daysOfWeek.map((day) => ({ day, slots: [] }));
+  }
+  next();
 });
 
 instructorSchema.methods.generateJwtToken = function () {

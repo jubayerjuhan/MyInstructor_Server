@@ -19,6 +19,7 @@ import {
   verifyUser,
 } from "../middlewares/verify_user.js";
 import { multerProcess } from "../utils/multer.js";
+import { setInstructorAvailability } from "../controllers/instructor_availability_controller.js";
 
 const router = Router();
 
@@ -45,6 +46,10 @@ router.route("/reset-password/instructor").post(resetPasswordInstructor);
 router
   .route("/instructor/change-availability/:id")
   .post(verifyUser, changeInstructorAvailability);
+
+router
+  .route("/instructor/:id/set-availability")
+  .post(verifyUser, setInstructorAvailability);
 
 // review
 router.route("/instructor/review").post(verifyUser, postRating);
