@@ -8,140 +8,158 @@ var validateEmail = function (email) {
   return re.test(email);
 };
 
-const instructorSchema = mongoose.Schema({
-  firstName: {
+const availabilitySchema = new mongoose.Schema({
+  day: {
     type: String,
     required: true,
   },
-  lastName: {
+  startTime: {
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    unique: true,
-    required: "Email address is required",
-    validate: [validateEmail, "Please fill a valid email address"],
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please fill a valid email address",
-    ],
-  },
-
-  phone: {
+  endTime: {
     type: String,
     required: true,
-  },
-  dateOfBirth: {
-    type: String,
-    required: true,
-  },
-  gender: {
-    type: String,
-    required: true,
-  },
-  available: {
-    type: Boolean,
-    default: true,
-    required: true,
-  },
-  transmissionType: {
-    type: String,
-    required: true,
-  },
-  // credit: {
-  //   type: Number,
-  //   default: 0,
-  // },
-  languages: [{ type: String, required: true }],
-  avater: {
-    type: String,
-    required: true,
-  },
-  bio: {
-    type: String,
-  },
-  reviews: [
-    {
-      user: { type: String },
-      rating: { type: Number },
-      message: { type: String },
-    },
-  ],
-  car: {
-    name: { type: String },
-    numberPlate: { type: String },
-    image: { type: String },
-  },
-  serviceSuburbs: {
-    suburbs: [
-      {
-        name: { type: String, required: true },
-        postCode: { type: String, required: true },
-      },
-    ],
-  },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-  resetPasswordToken: {
-    type: String,
-    select: false,
-  },
-  resetPasswordTime: {
-    type: Date,
-    select: false,
-  },
-  drivingLicenseExpire: {
-    type: Date,
-    required: true,
-  },
-  instructorLicenseExpire: {
-    type: Date,
-    required: true,
-  },
-  childrenCheckLicenseExpire: {
-    type: Date,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  hasGst: {
-    type: Boolean,
-    required: true,
-    enum: [true, false],
-    default: false,
-  },
-
-  bankAccountNumber: {
-    type: String,
-    required: true,
-  },
-  bsbNumber: {
-    type: String,
-    required: true,
-  },
-
-  abnNumber: {
-    type: String,
-    required: true,
-  },
-  invoiceAddress: {
-    type: String,
-    required: true,
-  },
-
-  userType: {
-    type: String,
-    default: "instructor",
   },
 });
+
+const instructorSchema = mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      required: "Email address is required",
+      validate: [validateEmail, "Please fill a valid email address"],
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please fill a valid email address",
+      ],
+    },
+
+    phone: {
+      type: String,
+      required: true,
+    },
+    dateOfBirth: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+    },
+    available: {
+      type: Boolean,
+      default: true,
+      required: true,
+    },
+    transmissionType: {
+      type: String,
+      required: true,
+    },
+    // credit: {
+    //   type: Number,
+    //   default: 0,
+    // },
+    languages: [{ type: String, required: true }],
+    avater: {
+      type: String,
+      required: true,
+    },
+    bio: {
+      type: String,
+    },
+    reviews: [
+      {
+        user: { type: String },
+        rating: { type: Number },
+        message: { type: String },
+      },
+    ],
+    car: {
+      name: { type: String },
+      numberPlate: { type: String },
+      image: { type: String },
+    },
+    serviceSuburbs: {
+      suburbs: [
+        {
+          name: { type: String, required: true },
+          postCode: { type: String, required: true },
+        },
+      ],
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+    resetPasswordTime: {
+      type: Date,
+      select: false,
+    },
+    drivingLicenseExpire: {
+      type: Date,
+      required: true,
+    },
+    instructorLicenseExpire: {
+      type: Date,
+      required: true,
+    },
+    childrenCheckLicenseExpire: {
+      type: Date,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
+    hasGst: {
+      type: Boolean,
+      required: true,
+      enum: [true, false],
+      default: false,
+    },
+
+    bankAccountNumber: {
+      type: String,
+      required: true,
+    },
+    bsbNumber: {
+      type: String,
+      required: true,
+    },
+
+    abnNumber: {
+      type: String,
+      required: true,
+    },
+    invoiceAddress: {
+      type: String,
+      required: true,
+    },
+    userType: {
+      type: String,
+      default: "instructor",
+    },
+    availability: [availabilitySchema],
+  },
+  { timestaps: true }
+);
 
 instructorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
