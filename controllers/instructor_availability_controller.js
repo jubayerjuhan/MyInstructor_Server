@@ -5,17 +5,29 @@ import { Instructor } from "../models/instructor_model.js";
 export const setInstructorAvailability = catchAsyncError(
   async (req, res, next) => {
     const { id } = req.params;
-    const { day, startTime, endTime } = req.body;
+    const { slots, removedSlots } = req.body;
 
-    const instructor = await Instructor.findOneAndUpdate(
-      { _id: id, "availability.day": day },
-      { $addToSet: { "availability.$.slots": { startTime, endTime } } },
-      { new: true }
-    );
-    console.log(instructor);
+    for (let slot of slots) {
+      const { day, startTime, endTime } = slot;
+      const instructor = await Instructor.findOneAndUpdate(
+        { _id: id, "availability.day": day },
+        { $addToSet: { "availability.$.slots": { startTime, endTime } } },
+        { new: true }
+      );
+    }
+
+    for (let slot of removedSlots) {
+      const { day, startTime, endTime } = slot;
+      const instructor = await Instructor.findOneAndUpdate(
+        { _id: id, "availability.day": day },
+        { $pull: { "availability.$.slots": { startTime, endTime } } },
+        { new: true }
+      );
+    }
+
     res.status(200).json({
       success: true,
-      instructor,
+      message: "Availability Updated",
     });
   }
 );
