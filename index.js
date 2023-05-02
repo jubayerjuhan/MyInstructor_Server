@@ -37,6 +37,7 @@ import { allowedorigin, checkOrigin } from "./middlewares/checkOrigin.js";
 
 // Verifying Middleware Of Instructor
 import { verifyInstructor } from "./middlewares/verify_user.js";
+import moment from "moment";
 
 // initializing app
 const app = express();
@@ -92,6 +93,7 @@ app.use(express.static("assets"));
 app.get("/", async (req, res, next) => {
   res.status(200).json({
     success: true,
+    today: moment().startOf("day"),
     message: `My Instructor Server Is Up And Running.....`,
   });
 });

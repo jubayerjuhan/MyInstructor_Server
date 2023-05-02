@@ -18,7 +18,7 @@ const fortNightlyPaymentSchema = mongoose.Schema(
       required: true,
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 export const FortnightlyPaymentModel = mongoose.model(

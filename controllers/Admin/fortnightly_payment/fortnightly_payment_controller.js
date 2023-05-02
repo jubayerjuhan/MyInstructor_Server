@@ -6,7 +6,7 @@ import { FortnightlyPaymentModel } from "../../../models/fortnightly_payment_mod
  * @param {string} invoice - The ID of the invoice associated with this payment.
  * @param {string} instructorId - The ID of the instructor who is receiving this payment.
  * @param {Object} breakdown - An object containing the breakdown of this payment, including the booking amount,
- *                              total amount, subtotal amount, management fee, GST, and inclusive GST.
+ * total amount, subtotal amount, management fee, GST, and inclusive GST.
  * @returns {Promise<FortnightlyPayment>} - A Promise that resolves with the newly created FortnightlyPayment document.
  * @throws {Error} - If there is an error creating the FortnightlyPayment document.
  */
@@ -69,3 +69,38 @@ export const instructorAllFortnightlyPayments = catchAsyncError(
     });
   }
 );
+
+export const getFinancialReports = catchAsyncError(async (req, res, next) => {
+  const { from, to } = req.body;
+
+  console.log(req.user._id);
+
+  const matchStage =
+    from && to
+      ? {
+          $match: {
+            createdAt: { $lte: new Date(to), $gte: new Date(from) },
+            instructor: req.user._id,
+          },
+        }
+      : {
+          $match: {},
+        };
+
+  const groupStage = {
+    $group: {
+      _id: null,
+      totalAmount: { $sum: "$subtotal" },
+      reports: { $push: "$$ROOT" },
+    },
+  };
+  const fortnightlyPayments = await FortnightlyPaymentModel.aggregate([
+    matchStage,
+    groupStage,
+  ]);
+
+  res.status(200).json({
+    success: true,
+    fortnightlyPayments,
+  });
+});
