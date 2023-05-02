@@ -7,145 +7,193 @@ var validateEmail = function (email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return re.test(email);
 };
-
-const instructorSchema = mongoose.Schema({
-  firstName: {
+const availabilitySchema = new mongoose.Schema({
+  day: {
     type: String,
     required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    unique: true,
-    required: "Email address is required",
-    validate: [validateEmail, "Please fill a valid email address"],
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please fill a valid email address",
+    enum: [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
     ],
   },
-
-  phone: {
-    type: String,
-    required: true,
-  },
-  dateOfBirth: {
-    type: String,
-    required: true,
-  },
-  gender: {
-    type: String,
-    required: true,
-  },
-  available: {
-    type: Boolean,
-    default: true,
-    required: true,
-  },
-  transmissionType: {
-    type: String,
-    required: true,
-  },
-  // credit: {
-  //   type: Number,
-  //   default: 0,
-  // },
-  languages: [{ type: String, required: true }],
-  avater: {
-    type: String,
-    required: true,
-  },
-  bio: {
-    type: String,
-  },
-  reviews: [
+  slots: [
     {
-      user: { type: String },
-      rating: { type: Number },
-      message: { type: String },
+      startTime: {
+        type: String,
+        required: true,
+      },
+      endTime: {
+        type: String,
+        required: true,
+      },
+      _id: false, // disable _id field
     },
   ],
-  car: {
-    name: { type: String },
-    numberPlate: { type: String },
-    image: { type: String },
-  },
-  serviceSuburbs: {
-    suburbs: [
+});
+
+const instructorSchema = mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      required: "Email address is required",
+      validate: [validateEmail, "Please fill a valid email address"],
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please fill a valid email address",
+      ],
+    },
+
+    phone: {
+      type: String,
+      required: true,
+    },
+    dateOfBirth: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+    },
+    available: {
+      type: Boolean,
+      default: true,
+      required: true,
+    },
+    transmissionType: {
+      type: String,
+      required: true,
+    },
+    // credit: {
+    //   type: Number,
+    //   default: 0,
+    // },
+    languages: [{ type: String, required: true }],
+    avater: {
+      type: String,
+      required: true,
+    },
+    bio: {
+      type: String,
+    },
+    reviews: [
       {
-        name: { type: String, required: true },
-        postCode: { type: String, required: true },
+        user: { type: String },
+        rating: { type: Number },
+        message: { type: String },
       },
     ],
-  },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-  resetPasswordToken: {
-    type: String,
-    select: false,
-  },
-  resetPasswordTime: {
-    type: Date,
-    select: false,
-  },
-  drivingLicenseExpire: {
-    type: Date,
-    required: true,
-  },
-  instructorLicenseExpire: {
-    type: Date,
-    required: true,
-  },
-  childrenCheckLicenseExpire: {
-    type: Date,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  hasGst: {
-    type: Boolean,
-    required: true,
-    enum: [true, false],
-    default: false,
-  },
+    car: {
+      name: { type: String },
+      numberPlate: { type: String },
+      image: { type: String },
+    },
+    serviceSuburbs: {
+      suburbs: [
+        {
+          name: { type: String, required: true },
+          postCode: { type: String, required: true },
+        },
+      ],
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+    resetPasswordTime: {
+      type: Date,
+      select: false,
+    },
+    drivingLicenseExpire: {
+      type: Date,
+      required: true,
+    },
+    instructorLicenseExpire: {
+      type: Date,
+      required: true,
+    },
+    childrenCheckLicenseExpire: {
+      type: Date,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
+    hasGst: {
+      type: Boolean,
+      required: true,
+      enum: [true, false],
+      default: false,
+    },
 
-  bankAccountNumber: {
-    type: String,
-    required: true,
-  },
-  bsbNumber: {
-    type: String,
-    required: true,
-  },
+    bankAccountNumber: {
+      type: String,
+      required: true,
+    },
+    bsbNumber: {
+      type: String,
+      required: true,
+    },
 
-  abnNumber: {
-    type: String,
-    required: true,
+    abnNumber: {
+      type: String,
+      required: true,
+    },
+    invoiceAddress: {
+      type: String,
+      required: true,
+    },
+    userType: {
+      type: String,
+      default: "instructor",
+    },
+    availability: [availabilitySchema],
   },
-  invoiceAddress: {
-    type: String,
-    required: true,
-  },
-
-  userType: {
-    type: String,
-    default: "instructor",
-  },
-});
+  { timestaps: true }
+);
 
 instructorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
+
+  if (!this.availability || this.availability.length === 0) {
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    this.availability = daysOfWeek.map((day) => ({
+      day,
+      slots: [{ startTime: "", endTime: "" }],
+    }));
+  }
+  next();
 });
 
 instructorSchema.methods.generateJwtToken = function () {
