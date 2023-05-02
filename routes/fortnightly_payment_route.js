@@ -12,6 +12,6 @@ const router = express.Router();
 router.route("/list").get(instructorAllFortnightlyPayments);
 
 // instructor fortnightly payment route
-router.route("/financial-reporting").get(getFinancialReports);
+router.route("/financial-reporting").post(getFinancialReports);
 
 export default router;

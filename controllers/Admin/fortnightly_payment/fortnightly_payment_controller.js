@@ -1,3 +1,4 @@
+import moment from "moment";
 import catchAsyncError from "../../../middlewares/catchAsyncError.js";
 import { FortnightlyPaymentModel } from "../../../models/fortnightly_payment_model.js";
 
@@ -73,34 +74,28 @@ export const instructorAllFortnightlyPayments = catchAsyncError(
 export const getFinancialReports = catchAsyncError(async (req, res, next) => {
   const { from, to } = req.body;
 
-  console.log(req.user._id);
-
-  const matchStage =
+  const fortnightlyPayments = await FortnightlyPaymentModel.find(
     from && to
       ? {
-          $match: {
-            createdAt: { $lte: new Date(to), $gte: new Date(from) },
-            instructor: req.user._id,
-          },
+          $and: [
+            {
+              createdAt: { $gte: moment(from).startOf("day").toLocaleString() },
+            },
+            { createdAt: { $lte: moment(to).endOf("day").toLocaleString() } },
+            { instructor: req.user._id },
+          ],
         }
       : {
-          $match: {},
-        };
+          $and: [{ instructor: req.user._id }],
+        }
+  );
 
-  const groupStage = {
-    $group: {
-      _id: null,
-      totalAmount: { $sum: "$subtotal" },
-      reports: { $push: "$$ROOT" },
-    },
-  };
-  const fortnightlyPayments = await FortnightlyPaymentModel.aggregate([
-    matchStage,
-    groupStage,
-  ]);
+  const totalAmount = fortnightlyPayments.reduce((acc, curr) => {
+    return acc + curr.subtotal;
+  }, 0);
 
   res.status(200).json({
     success: true,
-    fortnightlyPayments,
+    fortnightlyPayments: { reports: fortnightlyPayments, totalAmount },
   });
 });
