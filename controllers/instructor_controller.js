@@ -284,31 +284,47 @@ export const updateInstructorAvater = catchAsyncError(
 
 // insert rating
 export const postRating = catchAsyncError(async (req, res, next) => {
-  const { rating, review, instructor, booking } = req.body;
+  const {
+    rating,
+    review,
+    instructor: instructorId,
+    booking: bookingId,
+  } = req.body;
 
-  if (!rating || !review || !instructor || !booking)
-    return next(new Errorhandler(401, `Required Fields Not Found`));
-
-  const teacher = await Instructor.findById(instructor);
-  if (!teacher) return next(new Errorhandler(404, `Instructor Not Found`));
-
-  teacher.reviews.push({
-    user: `${req.user.firstName} ${req.user.lastName}`,
+  const ratingObject = {
     rating,
     message: review,
+    user: `${req.user.firstName} ${req.user.lastName}`,
+  };
+
+  // setting the reviews in the review section of the instructor schema
+  const instructor = await Instructor.findByIdAndUpdate(
+    instructorId,
+    {
+      $push: { reviews: ratingObject },
+    },
+    { new: true }
+  );
+
+  // sending error message if there is no instructor with the id
+  if (!instructor)
+    return next(new Errorhandler(400, "No Instructor With The Id"));
+
+  //setting the reviewd: true on the booking
+
+  const booking = await Booking.findByIdAndUpdate(bookingId, {
+    reviewed: true,
   });
 
-  const currentBooking = await Booking.findById(booking);
-  if (!currentBooking) return next(new Errorhandler(404, `Booking Not Found`));
-
-  currentBooking.reviewed = true;
-
-  currentBooking.save();
-  teacher.save();
+  // sending error message if there is no booking with the id
+  if (!instructor)
+    return next(new Errorhandler(400, "No Instructor With The Id"));
 
   res.status(200).json({
     success: true,
-    instructor: teacher,
+    message: "Review Updated Successfully",
+    instructor,
+    booking,
   });
 });
 
