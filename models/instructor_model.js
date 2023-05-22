@@ -204,7 +204,10 @@ instructorSchema.pre("save", async function (next) {
     ];
     this.availability = daysOfWeek.map((day) => ({
       day,
-      slots: [{ startTime: "", endTime: "" }],
+      slots: [
+        { startTime: "", endTime: "" },
+        { startTime: "6:00 AM", endTime: "10:00 PM" },
+      ],
     }));
   }
   next();

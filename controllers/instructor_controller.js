@@ -373,11 +373,9 @@ export const getExpiredInstructor = catchAsyncError(async (req, res, next) => {
 export const addClosedEvent = catchAsyncError(async (req, res, next) => {
   // Find the instructor by ID
   const instructor = await Instructor.findById(req.user._id);
-  instructor.closedEvents.push(req.body);
-
-  // Create a new closed event object
 
   // Add the closed event to the instructor's schedule
+  instructor.closedEvents.push(req.body);
 
   // Save the instructor object with the new closed event
   await instructor.save();
