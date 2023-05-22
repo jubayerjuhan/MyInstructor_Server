@@ -1,3 +1,4 @@
+import moment from "moment";
 import catchAsyncError from "../../../middlewares/catchAsyncError.js";
 import { FortnightlyPaymentModel } from "../../../models/fortnightly_payment_model.js";
 
@@ -6,7 +7,7 @@ import { FortnightlyPaymentModel } from "../../../models/fortnightly_payment_mod
  * @param {string} invoice - The ID of the invoice associated with this payment.
  * @param {string} instructorId - The ID of the instructor who is receiving this payment.
  * @param {Object} breakdown - An object containing the breakdown of this payment, including the booking amount,
- *                              total amount, subtotal amount, management fee, GST, and inclusive GST.
+ * total amount, subtotal amount, management fee, GST, and inclusive GST.
  * @returns {Promise<FortnightlyPayment>} - A Promise that resolves with the newly created FortnightlyPayment document.
  * @throws {Error} - If there is an error creating the FortnightlyPayment document.
  */
@@ -69,3 +70,32 @@ export const instructorAllFortnightlyPayments = catchAsyncError(
     });
   }
 );
+
+export const getFinancialReports = catchAsyncError(async (req, res, next) => {
+  const { from, to } = req.body;
+
+  const fortnightlyPayments = await FortnightlyPaymentModel.find(
+    from && to
+      ? {
+          $and: [
+            {
+              createdAt: { $gte: moment(from).startOf("day").toLocaleString() },
+            },
+            { createdAt: { $lte: moment(to).endOf("day").toLocaleString() } },
+            { instructor: req.user._id },
+          ],
+        }
+      : {
+          $and: [{ instructor: req.user._id }],
+        }
+  );
+
+  const totalAmount = fortnightlyPayments.reduce((acc, curr) => {
+    return acc + curr.subtotal;
+  }, 0);
+
+  res.status(200).json({
+    success: true,
+    fortnightlyPayments: { reports: fortnightlyPayments, totalAmount },
+  });
+});

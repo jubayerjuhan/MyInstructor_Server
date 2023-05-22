@@ -42,6 +42,8 @@ export const addEarningsToInstructor = async (instructor, booking, next) => {
           gst: Number(inclusiveGst.toFixed(2)),
         },
       ],
+      inclusiveGst: Number(inclusiveGst.toFixed(2)),
+      bookingAmount: Number(totalLessonPrice.toFixed(2)),
       customerAbn: instructor?.abnNumber,
       customerAddress: instructor?.invoiceAddress,
       invoiceId: Date.now(),

@@ -102,6 +102,10 @@
         margin-top: 20px;
         line-height: 1.8;
       }
+
+      .bold-text {
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
@@ -130,7 +134,7 @@
         <div class="invoice-info">
           <p class="id"><span>ID</span><%=invoiceId%></p>
           <p class="date"><span>Date</span><%=date%></p>
-          <p class="amount"><span>Amount</span>$<%= subtotal %></p>
+          <p class="amount"><span>Amount</span>$<%= total %></p>
           <p class="description"><span>Description</span>MST Transfer</p>
         </div>
       </div>
@@ -155,6 +159,11 @@
             <td colspan="3">$<%= item.amount %></td>
           </tr>
           <% }); %>
+          <tr>
+            <td colspan="10" class="blank-column"></td>
+            <td colspan="3" class="bold-text">$<%= inclusiveGst %></td>
+            <td colspan="3" class="bold-text">$<%= bookingAmount %></td>
+          </tr>
           <tr>
             <td colspan="13" class="management-fee">Management Fee (20%)</td>
             <td colspan="4">$<%= managementFee %></td>
