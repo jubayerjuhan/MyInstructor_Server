@@ -368,3 +368,21 @@ export const getExpiredInstructor = catchAsyncError(async (req, res, next) => {
     date: Date.now(),
   });
 });
+
+// Controller function to add a closed event
+export const addClosedEvent = catchAsyncError(async (req, res, next) => {
+  // Find the instructor by ID
+  const instructor = await Instructor.findById(req.user._id);
+  instructor.closedEvents.push(req.body);
+
+  // Create a new closed event object
+
+  // Add the closed event to the instructor's schedule
+
+  // Save the instructor object with the new closed event
+  await instructor.save();
+
+  res
+    .status(200)
+    .json({ success: true, message: "Closed event added successfully" });
+});

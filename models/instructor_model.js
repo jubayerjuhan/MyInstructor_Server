@@ -25,15 +25,28 @@ const availabilitySchema = new mongoose.Schema({
     {
       startTime: {
         type: String,
-        required: true,
       },
       endTime: {
         type: String,
-        required: true,
       },
       _id: false, // disable _id field
     },
   ],
+});
+
+const closedEventSchema = new mongoose.Schema({
+  eventName: {
+    type: String,
+    required: true,
+  },
+  startTime: {
+    type: Date,
+    required: true,
+  },
+  endTime: {
+    type: Date,
+    required: true,
+  },
 });
 
 const instructorSchema = mongoose.Schema(
@@ -170,6 +183,7 @@ const instructorSchema = mongoose.Schema(
       default: "instructor",
     },
     availability: [availabilitySchema],
+    closedEvents: [closedEventSchema],
   },
   { timestaps: true }
 );
