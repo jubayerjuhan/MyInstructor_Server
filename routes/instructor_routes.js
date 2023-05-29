@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  addClosedEvent,
   addInstructor,
   changeInstructorAvailability,
   editInstructor,
@@ -31,6 +32,7 @@ router
   .post(verifyAdmin, multerProcess.single("avater"), addInstructor);
 router.route("/login-instructor").post(loginInstructor);
 router.route("/edit-instructor").put(verifyInstructor, editInstructor);
+router.route("/instructor/closed-event").post(verifyInstructor, addClosedEvent);
 router
   .route("/instructor/update-avater")
   .put(
