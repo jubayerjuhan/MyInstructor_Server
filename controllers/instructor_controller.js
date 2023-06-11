@@ -384,3 +384,42 @@ export const addClosedEvent = catchAsyncError(async (req, res, next) => {
     .status(200)
     .json({ success: true, message: "Closed event added successfully" });
 });
+
+// Controller function to get all closed events
+export const getClosedEvents = catchAsyncError(async (req, res, next) => {
+  // Find the instructor by ID
+  const instructor = await Instructor.findById(req.user._id);
+
+  // Retrieve the closed events from the instructor's schedule
+  const closedEvents = instructor.closedEvents;
+
+  res.status(200).json({ success: true, closedEvents });
+});
+
+// Controller function to delete a closed event
+export const deleteClosedEvent = catchAsyncError(async (req, res, next) => {
+  // Find the instructor by ID
+  const instructor = await Instructor.findById(req.user._id);
+
+  // Find the index of the closed event to be deleted
+  const eventIndex = instructor.closedEvents.findIndex(
+    (event) => event._id.toString() === req.params.eventId
+  );
+
+  // Check if the closed event exists
+  if (eventIndex === -1) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Closed event not found" });
+  }
+
+  // Remove the closed event from the instructor's schedule
+  instructor.closedEvents.splice(eventIndex, 1);
+
+  // Save the instructor object with the closed event removed
+  await instructor.save();
+
+  res
+    .status(200)
+    .json({ success: true, message: "Closed event deleted successfully" });
+});
