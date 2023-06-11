@@ -3,9 +3,11 @@ import {
   addClosedEvent,
   addInstructor,
   changeInstructorAvailability,
+  deleteClosedEvent,
   editInstructor,
   forgotInstructorPassword,
   getAllsuburbs,
+  getClosedEvents,
   loginInstructor,
   postRating,
   resetPasswordInstructor,
@@ -33,6 +35,12 @@ router
 router.route("/login-instructor").post(loginInstructor);
 router.route("/edit-instructor").put(verifyInstructor, editInstructor);
 router.route("/instructor/closed-event").post(verifyInstructor, addClosedEvent);
+router
+  .route("/instructor/closed-event/list")
+  .get(verifyInstructor, getClosedEvents);
+router
+  .route("/instructor/closed-event/:eventId")
+  .delete(verifyInstructor, deleteClosedEvent);
 router
   .route("/instructor/update-avater")
   .put(
